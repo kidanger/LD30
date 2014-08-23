@@ -8,8 +8,10 @@ local theend = require 'end'
 
 local game = {
 	map=nil,
-	cx=150,
+	cx=0,
 	cy=0,
+	ccx=0,
+	ccy=0,
 	zoom=1,
 	move=false,
 	selectedcity=nil,
@@ -33,13 +35,8 @@ function game:load_next_level()
 	local lvl = self.levels[self.current_level]
 	if lvl then
 		self.map = Map:new(lvl.load)
-		local x, y = 0, 0
-		for _, c in ipairs(self.map.cities) do
-			x = x + c.x
-			y = y + c.y
-		end
-		self.cx = x / #self.map.cities
-		self.cy = y / #self.map.cities
+		self:center_cam()
+		self.selectedcity=nil
 		if lvl.on_enter then
 			lvl.on_enter(self)
 		end
@@ -48,21 +45,26 @@ function game:load_next_level()
 	end
 end
 
+function game:center_cam()
+	local x, y = 0, 0
+	for _, c in ipairs(self.map.cities) do
+		x = x + c.x
+		y = y + c.y
+	end
+	self.cx = x / #self.map.cities
+	self.cy = y / #self.map.cities
+end
+
 function game:restart()
 	if self.map then self.map.finished = false end
 	local lvl = self.levels[self.current_level]
 	if lvl then
+		self.map = Map:new(lvl.load)
+		self:center_cam()
+		self.selectedcity=nil
 		if lvl.on_enter then
 			lvl.on_enter(self)
 		end
-		self.map = Map:new(lvl.load)
-		local x, y = 0, 0
-		for _, c in ipairs(self.map.cities) do
-			x = x + c.x
-			y = y + c.y
-		end
-		self.cx = x / #self.map.cities
-		self.cy = y / #self.map.cities
 	else
 		set_state(theend)
 	end
@@ -126,8 +128,10 @@ function game:draw()
 	drystal.set_color(backcolor)
 	drystal.draw_background()
 
-	drystal.camera.x = - self.cx + drystal.screen.w / 2
-	drystal.camera.y = - self.cy + drystal.screen.h / 2
+	self.ccx = self.ccx + (self.cx-self.ccx)*.2
+	self.ccy = self.ccy + (self.cy-self.ccy)*.2
+	drystal.camera.x = - self.ccx + drystal.screen.w / 2
+	drystal.camera.y = - self.ccy + drystal.screen.h / 2
 	drystal.camera.zoom = self.zoom
 
 	self.map:draw()
@@ -224,7 +228,9 @@ function game:buy_link(link)
 		table.insert(self.map.links, link)
 		link.type = toolbar.type
 		link.bought = true
-		print(c1count, c2count)
+		if link.on_buy then
+			link:on_buy(self)
+		end
 		local j = 1
 		while j <= #self.map.possiblelinks do
 			local l = self.map.possiblelinks[j]
@@ -233,11 +239,9 @@ function game:buy_link(link)
 				self.map.possiblelinks[j] = self.map.possiblelinks[#self.map.possiblelinks]
 				self.map.possiblelinks[#self.map.possiblelinks] = nil
 				j = j - 1
-				print('remove1')
 			elseif c2count == 2 and (l.c1 == link.c2 or l.c2 == link.c2) then
 				self.map.possiblelinks[j] = self.map.possiblelinks[#self.map.possiblelinks]
 				self.map.possiblelinks[#self.map.possiblelinks] = nil
-				print('remove2')
 				j = j - 1
 			end
 			j = j + 1

@@ -71,7 +71,7 @@ function City:draw2()
 	drystal.set_alpha(255)
 
 	drawvalue(self, 'food', -1, -1)
-	drawvalue(self, 'nature', 1, -1)
+	--drawvalue(self, 'nature', 1, -1)
 	drawvalue(self, 'technology', -1, 1)
 	drawvalue(self, 'money', 1, 1)
 

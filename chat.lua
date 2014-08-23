@@ -17,8 +17,8 @@ end
 
 function Chat:draw()
 	if self.cx then
-		self.game.cx = self.game.cx + (self.cx-self.game.cx)*.2
-		self.game.cy = self.game.cy + (self.cy-self.game.cy)*.2
+		self.game.cx = self.cx
+		self.game.cy = self.cy
 	end
 	self.game:draw()
 
@@ -52,20 +52,24 @@ function Chat:draw()
 	end
 end
 
-function Chat:mouse_press(x, y, b)
+function Chat:nnn()
 	if self.i < #self.texts then
 		self.i = self.i + 1
 	else
+		if not self.next then
+			self.game:center_cam()
+		end
 		set_state(self.next or self.game)
 	end
 end
+
+function Chat:mouse_press(x, y, b)
+	self:nnn()
+end
+
 function Chat:key_press(k)
 	if k == 'space' then
-		if self.i < #self.texts then
-			self.i = self.i + 1
-		else
-			set_state(self.next or self.game)
-		end
+		self:nnn()
 	end
 end
 

@@ -3,7 +3,7 @@ local Chat = require 'chat'
 
 local function stats(f, n, t, g)
 	local s = {}
-	s[LinkType.nature]=n
+	--s[LinkType.nature]=n
 	s[LinkType.technology]=t
 	s[LinkType.food]=f
 	s[LinkType.money]=g
@@ -32,13 +32,38 @@ return {
 			local c3 = Chat:new(self, {
 				'And here is '..CC('Nashua', nash.color)..". It needs "..CC('Food',LinkType.food.color)..', badly.',
 				"Click on "..CC('Nashua', nash.color).." and link it to "..CC('Philadelphia', phil.color),
-				"And then, click on "..CC('Philadelphia', phil.color)..' and link it to '..CC('New York', C.indianred)..
-				'\nwith the '..CC('Money Link', LinkType.money.color)..'.'
 			}, nash.x, nash.y, W/2,H/2)
 			c1.next = c2
 			c2.next = c3
 			c1.fade=true
 			set_state(c1)
+
+			local l = self.map:get_link(nash, phil)
+			l.on_buy = function(l, self)
+				if l.type == LinkType.money then
+					local c = Chat:new(self, {
+						'Err, I think you made a mistake. You had to use the\n'..CC('Food Link',LinkType.food.color)..
+						' in order to transfer '..CC('Food',LinkType.food.color).. ' from '..CC('Philadelphia', phil.color)..
+						'\nto ' .. CC('Nashua',nash.color) .. '.',
+						'Restart the level using the top right button.'
+					})
+					set_state(c)
+				else
+					local c = Chat:new(self, {
+						"Good. Now click on "..CC('Philadelphia', phil.color)..' and link it to\n'..CC('New York', C.indianred)..
+						' with the '..CC('Money Link', LinkType.money.color)..'.'
+					}, nil, nil, W*.6,H*.05)
+					set_state(c)
+				end
+			end
+			local l = self.map:get_link(self.map.capital, phil)
+			l.on_buy = function(l, self)
+				local c = Chat:new(self, {
+					'Great. Now look at the objectives.'..
+					'\nYou have to '..CC('validate', C.green)..' each one in order to go\nto the next level.',
+				}, nil, nil, W*.09,H*.19)
+				set_state(c)
+			end
 		end,
 		load=function (self)
 			self.capital = self:add_city('New York', 0, 0, stats(-1, -1, -1, 0), C.indianred, true)
@@ -67,7 +92,7 @@ return {
 			self:add_objective('Paris wants money!!! (200)', function ()
 				return self.capital:money() >= 200
 			end)
-			self:add_objective('Marseille needs some computers (20)!', function (map) return marseille:technology() >= 20 end)
+			self:add_objective('Marseille needs some computers! (20)', function (map) return marseille:technology() >= 20 end)
 		end,
 	},
 	{
