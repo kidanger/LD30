@@ -11,6 +11,7 @@ function Link:init(c1, c2)
 	self.transfer = 0
 	self.transfertime = -1
 	self.amount = 0
+	self.distance = math.distance(c1.x, c1.y, c2.x, c2.y)
 end
 
 function Link:update(dt)
@@ -71,12 +72,26 @@ function Link:draw()
 		local y = lume.smooth(self.c1.y, self.c2.y, self.transfertime)
 		drystal.set_point_size(8)
 		drystal.draw_point(x, y)
+		local x = lume.smooth(self.c1.x, self.c2.x, self.transfertime - 0.016*1)
+		local y = lume.smooth(self.c1.y, self.c2.y, self.transfertime - 0.016*1)
+		drystal.set_point_size(6)
+		drystal.draw_point(x, y)
+		local x = lume.smooth(self.c1.x, self.c2.x, self.transfertime + 0.016*1)
+		local y = lume.smooth(self.c1.y, self.c2.y, self.transfertime + 0.016*1)
+		drystal.draw_point(x, y)
 	end
 	if self.transfer == 2 then
 		drystal.set_color(self.type.color:lighter():lighter())
 		local x = lume.smooth(self.c2.x, self.c1.x, self.transfertime)
 		local y = lume.smooth(self.c2.y, self.c1.y, self.transfertime)
 		drystal.set_point_size(8)
+		drystal.draw_point(x, y)
+		local x = lume.smooth(self.c2.x, self.c1.x, self.transfertime - 0.016*1)
+		local y = lume.smooth(self.c2.y, self.c1.y, self.transfertime - 0.016*1)
+		drystal.set_point_size(6)
+		drystal.draw_point(x, y)
+		local x = lume.smooth(self.c2.x, self.c1.x, self.transfertime + 0.016*1)
+		local y = lume.smooth(self.c2.y, self.c1.y, self.transfertime + 0.016*1)
 		drystal.draw_point(x, y)
 	end
 end

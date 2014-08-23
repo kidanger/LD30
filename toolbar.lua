@@ -48,6 +48,7 @@ function toolbar.mouse_press(x, y, b)
 	end
 end
 function toolbar.mouse_motion(x, y)
+	toolbar.hl = 0
 	if y > 40 then return false end
 	for i, s in ipairs(stuff) do
 		if x > s.x and x < s.x + w then

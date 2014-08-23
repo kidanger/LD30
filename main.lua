@@ -14,6 +14,10 @@ tween = require 'tween'
 local state = require 'game'
 state:init()
 
+function set_state(st)
+	state = st
+end
+
 function drystal.update(dt)
 	state:update(dt)
 end

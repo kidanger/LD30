@@ -4,27 +4,13 @@ local Objective = require 'objective'
 local Link = require 'link'
 local Map = class 'Map'
 
-local function stats(f, n, t, g)
-	local s = {}
-	s[LinkType.nature]=n
-	s[LinkType.technology]=t
-	s[LinkType.food]=f
-	s[LinkType.money]=g
-	return s
-end
-
-function Map:init()
+function Map:init(f)
 	self.links = {}
 	self.possiblelinks = {}
 	self.cities = {}
 	self.objectives = {}
-
-	self.capital = self:add_city('New York', 0, 0, stats(0, -1, -1, 50), true)
-	self:add_city('Philadelphia', 260, -100, stats(80, -1, -1, 0))
-	self:add_city('Nashua', 350, 180, stats(10, -1, -1, 0))
-
-	self:add_objective('New York needs moar money (200)', function (map) return self.capital:money() >= 200 end)
-	self:add_objective('Nashua need food to survive!', function (map) return self.capital:food() >= 70 end)
+	self.finished = false
+	f(self)
 end
 
 function Map:add_objective(...)

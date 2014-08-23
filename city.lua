@@ -1,14 +1,14 @@
 local LinkType = require 'linktype'
 local City = class 'City'
 
-function City:init(name, x, y, initstats, is_capital)
+function City:init(name, x, y, initstats, color, is_capital)
 	self.name = name
-	self.color = drystal.new_color('hsl', math.random(360), 0.5, 0.6)
+	self.color = color or drystal.new_color('hsl', math.random(360), 0.5, 0.6)
 	self.colordark = self.color:lighter():lighter()
 	self.x = x
 	self.y = y
-	self.maxstats = maxstats or {}
 	self.stats = lume.clone(initstats or {})
+	self.produces = initstats or {}
 	for _, t in pairs(LinkType) do
 		self.stats[t] = self.stats[t] or 0
 	end
@@ -18,16 +18,16 @@ function City:init(name, x, y, initstats, is_capital)
 end
 
 function City:update(dt)
-	for _, t in pairs(LinkType) do
-		if t ~= LinkType.money then
+	for t, n in pairs(self.produces) do
+		if n > 0 and t ~= LinkType.money then
 			if self.stats[t] > 0 then
 				self.stats[t] = self.stats[t] + dt
 			end
 			if self.stats[t] > 200 then
 				self.stats[t] = 200
 			end
-			if self.stats[t] > 50 then
-				self.stats[LinkType.money] = self.stats[LinkType.money] + math.log(self.stats[t] - 49)*dt
+			if self.stats[t] > 0 then
+				self.stats[LinkType.money] = self.stats[LinkType.money] + math.log(self.stats[t]+1)*dt
 			end
 		end
 	end
@@ -52,11 +52,15 @@ local function drawvalue(self, t, dx, dy)
 		str = tostring(lume.round(a))
 	end
 	local w, h = smallfont:sizeof(str)
-	local x = self.x + self.size*dx*.2
+	local x = self.x + self.size*dx*.3
 	local y = self.y + self.size*dy*.34
 	x = x - w / 2
 	y = y - h / 2
-	smallfont:draw('{shadowx:1|shadowy:1|'..str..'}', x, y)
+	if self.produces[LinkType[t]] > 0 then
+		smallfont:draw('{shadowx:1|shadowy:1|'..str..'}{r:0|b:0|g:' .. lume.smooth(0, 200, math.sin(TIME)*.5+.5).. '|+}', x, y)
+	else
+		smallfont:draw('{shadowx:1|shadowy:1|'..str..'}', x, y)
+	end
 end
 
 function City:draw2()
@@ -68,12 +72,12 @@ function City:draw2()
 	drawvalue(self, 'money', 1, 1)
 
 	drystal.set_color(255,255,255)
-	local w, h = smallfont:sizeof(self.name)
-	smallfont:draw('{shadowx:1|shadowy:1|'..self.name..'}', self.x-w/2, self.y-h/2)
+	local w, h = font:sizeof(self.name)
+	font:draw('{shadowx:2|shadowy:2|'..self.name..'}', self.x-w/2, self.y-self.size/2-h*1.3)
 
 	if self.is_capital then
-		local w, h = smallfont:sizeof 'Capital'
-		font:draw('Capital', self.x, self.y-self.size/2-h*2, 2)
+		local w, h = smallfont:sizeof('Capital')
+		smallfont:draw('{shadowx:1|shadowy:1|Capital}', self.x-w/2, self.y-h/2)
 	end
 end
 

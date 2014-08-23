@@ -5,6 +5,5 @@ function Objective:init(expl, condition)
 	self.condition = condition
 end
 
-
 return Objective
 

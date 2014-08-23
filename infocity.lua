@@ -27,7 +27,7 @@ function infocity.draw(c)
 		else
 			smallfont:draw(t.name .. ': not accepted', x1+20, y)
 		end
-		y = y + 13
+		y = y + 14
 		t = t.next
 	until t == LinkType.food
 end
