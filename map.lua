@@ -1,9 +1,10 @@
 local LinkType = require 'linktype'
 local City = require 'city'
+local Objective = require 'objective'
 local Link = require 'link'
 local Map = class 'Map'
 
-local function stats(n, t, f, g)
+local function stats(f, n, t, g)
 	local s = {}
 	s[LinkType.nature]=n
 	s[LinkType.technology]=t
@@ -16,15 +17,20 @@ function Map:init()
 	self.links = {}
 	self.possiblelinks = {}
 	self.cities = {}
-	self.capital = self:add_city('Caen', 0, 0,
-		stats(100, 10, 0, 0),
-		stats(0, 0, 0, 0))
-	local c1 = self:add_city('Colombelles', 260, -50,
-		stats(1000, 0, 0, 0),
-		stats(500, 0, 0, 0))
-	local c2 = self:add_city('Paris', 530, 90,
-		stats(100, 10, 0, 10),
-		stats(0, 0, 0, 5))
+	self.objectives = {}
+
+	self.capital = self:add_city('New York', 0, 0, stats(0, -1, -1, 50), true)
+	self:add_city('Philadelphia', 260, -100, stats(80, -1, -1, 0))
+	self:add_city('Nashua', 350, 180, stats(10, -1, -1, 0))
+
+	self:add_objective('New York needs moar money (200)', function (map) return self.capital:money() >= 200 end)
+	self:add_objective('Nashua need food to survive!', function (map) return self.capital:food() >= 70 end)
+end
+
+function Map:add_objective(...)
+	local o = Objective:new(...)
+	table.insert(self.objectives, o)
+	return o
 end
 
 function Map:add_city(...)
@@ -80,6 +86,14 @@ function Map:draw()
 	end
 	for _, c in ipairs(self.cities) do
 		c:draw2()
+	end
+end
+
+function Map:get_city(name)
+	for _, c in ipairs(self.cities) do
+		if c.name == name then
+			return c
+		end
 	end
 end
 

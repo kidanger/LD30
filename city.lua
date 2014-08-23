@@ -1,7 +1,7 @@
 local LinkType = require 'linktype'
 local City = class 'City'
 
-function City:init(name, x, y, maxstats, initstats)
+function City:init(name, x, y, initstats, is_capital)
 	self.name = name
 	self.color = drystal.new_color('hsl', math.random(360), 0.5, 0.6)
 	self.colordark = self.color:lighter():lighter()
@@ -11,13 +11,26 @@ function City:init(name, x, y, maxstats, initstats)
 	self.stats = lume.clone(initstats or {})
 	for _, t in pairs(LinkType) do
 		self.stats[t] = self.stats[t] or 0
-		self.maxstats[t] = self.maxstats[t] or 0
 	end
-	self.size = 64
+	self.is_capital = is_capital
+	self.size = is_capital and 80 or 50
 	self.selected = false
 end
 
 function City:update(dt)
+	for _, t in pairs(LinkType) do
+		if t ~= LinkType.money then
+			if self.stats[t] > 0 then
+				self.stats[t] = self.stats[t] + dt
+			end
+			if self.stats[t] > 200 then
+				self.stats[t] = 200
+			end
+			if self.stats[t] > 50 then
+				self.stats[LinkType.money] = self.stats[LinkType.money] + math.log(self.stats[t] - 49)*dt
+			end
+		end
+	end
 end
 
 function City:draw()
@@ -33,10 +46,10 @@ end
 
 local function drawvalue(self, t, dx, dy)
 	drystal.set_color(LinkType[t].color:darker():darker():darker())
-	local a, b = self[t](self)
+	local a = self[t](self)
 	local str = '-'
-	if b ~= 0 then
-		str = tostring(math.floor(100*a/b)) .. '%'
+	if a ~= -1 then
+		str = tostring(lume.round(a))
 	end
 	local w, h = smallfont:sizeof(str)
 	local x = self.x + self.size*dx*.2
@@ -49,27 +62,32 @@ end
 function City:draw2()
 	drystal.set_alpha(255)
 
-	drawvalue(self, 'nature', -1, -1)
-	drawvalue(self, 'technology', 1, -1)
-	drawvalue(self, 'food', -1, 1)
+	drawvalue(self, 'food', -1, -1)
+	drawvalue(self, 'nature', 1, -1)
+	drawvalue(self, 'technology', -1, 1)
 	drawvalue(self, 'money', 1, 1)
 
 	drystal.set_color(255,255,255)
 	local w, h = smallfont:sizeof(self.name)
 	smallfont:draw('{shadowx:1|shadowy:1|'..self.name..'}', self.x-w/2, self.y-h/2)
+
+	if self.is_capital then
+		local w, h = smallfont:sizeof 'Capital'
+		font:draw('Capital', self.x, self.y-self.size/2-h*2, 2)
+	end
 end
 
 function City:nature()
-	return self.stats[LinkType.nature], self.maxstats[LinkType.nature]
+	return self.stats[LinkType.nature]
 end
 function City:technology()
-	return self.stats[LinkType.technology], self.maxstats[LinkType.technology]
+	return self.stats[LinkType.technology]
 end
 function City:food()
-	return self.stats[LinkType.food], self.maxstats[LinkType.food]
+	return self.stats[LinkType.food]
 end
 function City:money()
-	return self.stats[LinkType.money], self.maxstats[LinkType.money]
+	return self.stats[LinkType.money]
 end
 
 return City

@@ -13,9 +13,9 @@ local types = {
 }
 
 types.nature.next = types.technology
-types.technology.next = types.food
-types.food.next = types.money
-types.money.next = types.nature
+types.technology.next = types.money
+types.food.next = types.nature
+types.money.next = types.food
 
 return types
 

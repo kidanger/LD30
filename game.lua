@@ -1,6 +1,8 @@
 local LinkType = require 'linktype'
 local Map = require 'map'
 local infocity = require 'infocity'
+local toolbar = require 'toolbar'
+local objectives = require 'objectives'
 
 local game = {
 	map=nil,
@@ -10,7 +12,6 @@ local game = {
 	move=false,
 	selectedcity=nil,
 	hllink=nil,
-	linktype=LinkType.nature,
 
 	money=1000,
 }
@@ -54,7 +55,7 @@ function game:try_hl_link()
 		if c ~= c2 and nearline(c.x, c.y, c2.x, c2.y, x, y, 6) then
 			local l = self.map:get_link(c, c2)
 			if not l.bought then
-				l.type = self.linktype
+				l.type = toolbar.type
 				self.hllink = l
 				self.hllink.hl = true
 				break
@@ -77,6 +78,13 @@ function game:draw()
 	if self.selectedcity then
 		infocity.draw(self.selectedcity)
 	end
+	toolbar.draw()
+
+	objectives.draw(self.map)
+	if self.map.finished then
+		drystal.set_color(255,255,255)
+		bigfont:draw('Press <space> to play next level', 20, H*.9)
+	end
 
 	drystal.camera.x = - self.cx + drystal.screen.w / 2
 	drystal.camera.y = - self.cy + drystal.screen.h / 2
@@ -86,9 +94,6 @@ end
 function game:key_press(k)
 	if k == 'a' then
 		drystal.stop()
-	elseif k == 'b' then
-		self.linktype = self.linktype.next
-		print(self.linktype.name)
 	end
 end
 
@@ -116,7 +121,7 @@ function game:buy_link(link)
 	if i then
 		table.remove(self.map.possiblelinks, i)
 		table.insert(self.map.links, link)
-		link.type = self.linktype
+		link.type = toolbar.type
 		link.bought = true
 	end
 end
@@ -130,7 +135,9 @@ function game:mouse_press(x, y, b)
 			self.hllink.hl = false
 			self.hllink = nil
 		else
-			self:select_city(drystal.screen2scene(x, y))
+			if not toolbar.mouse_press(x, y, b) then
+				self:select_city(drystal.screen2scene(x, y))
+			end
 		end
 	end
 end
@@ -142,15 +149,18 @@ function game:mouse_motion(x, y, dx, dy)
 	end
 	mx = x
 	my = y
+	toolbar.mouse_motion(x, y)
 end
 
 function game:mouse_release(x, y, b)
 	if b == 3 then
 		self.move = false
 	elseif b == 4 then
-		self.zoom = self.zoom * 1.1
+		--self.zoom = self.zoom * 1.1
+		toolbar.prev()
 	elseif b == 5 then
-		self.zoom = self.zoom * .9
+		--self.zoom = self.zoom * .9
+		toolbar.next()
 	end
 end
 

@@ -4,8 +4,8 @@ W = 900
 H = 600
 drystal.resize(W, H)
 smallfont = drystal.load_font('font.ttf', 14)
-font = drystal.load_font('font.ttf', 34)
-bigfont = drystal.load_font('font.ttf', 64)
+font = drystal.load_font('font.ttf', 26)
+bigfont = drystal.load_font('font.ttf', 38)
 
 class = require 'middleclass'
 lume = require 'lume'

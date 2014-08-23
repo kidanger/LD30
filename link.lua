@@ -1,3 +1,4 @@
+local LinkType = require 'linktype'
 local Link = class 'Link'
 
 function Link:init(c1, c2)
@@ -15,22 +16,29 @@ end
 function Link:update(dt)
 	if self.transfertime == -1 then
 		local x1 = self.c1.stats[self.type] or 0
-		local max1 = self.c1.maxstats[self.type] or 0
 		local x2 = self.c2.stats[self.type] or 0
-		local max2 = self.c2.maxstats[self.type] or 0
+		if self.type == LinkType.money and self.c1.is_capital then
+			x1 = 0
+		elseif self.type == LinkType.money and self.c2.is_capital then
+			x2 = 0
+		end
 
-		if x1 < x2 and x1 / max1 < x2 / max2 then
-			self.transfer = 2
-			self.transfertime = 0
+		if x1 < x2 then
 			local n = math.floor(self.c2.stats[self.type] * .1)
-			self.amount = n
-			self.c2.stats[self.type] = self.c2.stats[self.type] - n
-		elseif x1 > x2 and x1 / max1 > x2 / max2 then
-			self.transfer = 1
-			self.transfertime = 0
+			if n > 0 then
+				self.amount = n
+				self.c2.stats[self.type] = self.c2.stats[self.type] - n
+				self.transfer = 2
+				self.transfertime = 0
+			end
+		elseif x1 > x2 then
 			local n = math.floor(self.c1.stats[self.type] * .1)
-			self.amount = n
-			self.c1.stats[self.type] = self.c1.stats[self.type] - n
+			if n > 0 then
+				self.transfer = 1
+				self.transfertime = 0
+				self.amount = n
+				self.c1.stats[self.type] = self.c1.stats[self.type] - n
+			end
 		end
 	end
 	if self.transfertime > -1 then
