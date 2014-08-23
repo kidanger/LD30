@@ -25,7 +25,7 @@ function Link:update(dt)
 		end
 
 		if x1 < x2 then
-			local n = math.floor(self.c2.stats[self.type] * .1)
+			local n = math.floor(self.c2.stats[self.type] * self.c2.give)
 			if n > 0 then
 				self.amount = n
 				self.c2.stats[self.type] = self.c2.stats[self.type] - n
@@ -33,7 +33,7 @@ function Link:update(dt)
 				self.transfertime = 0
 			end
 		elseif x1 > x2 then
-			local n = math.floor(self.c1.stats[self.type] * .1)
+			local n = math.floor(self.c1.stats[self.type] * self.c1.give)
 			if n > 0 then
 				self.transfer = 1
 				self.transfertime = 0

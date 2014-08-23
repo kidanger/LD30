@@ -12,13 +12,16 @@ lume = require 'lume'
 tween = require 'tween'
 
 local state = require 'game'
-state:init()
 
 function set_state(st)
 	state = st
 end
 
+state:init()
+
+TIME = 0
 function drystal.update(dt)
+	TIME = TIME + dt
 	state:update(dt)
 end
 

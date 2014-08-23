@@ -8,7 +8,7 @@ end
 local types = {
 	nature=LinkType:new('Nature', drystal.colors.green),
 	technology=LinkType:new('Technology', drystal.colors.grey),
-	food=LinkType:new('Food', drystal.colors.orange),
+	food=LinkType:new('Food', drystal.colors.saddlebrown),
 	money=LinkType:new('Money', drystal.colors.yellow),
 }
 

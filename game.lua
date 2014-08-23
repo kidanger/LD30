@@ -1,4 +1,5 @@
 local LinkType = require 'linktype'
+local Node = require 'linktype'
 local Map = require 'map'
 local infocity = require 'infocity'
 local toolbar = require 'toolbar'
@@ -31,6 +32,26 @@ function game:load_next_level()
 	self.current_level = self.current_level + 1
 	local lvl = self.levels[self.current_level]
 	if lvl then
+		self.map = Map:new(lvl.load)
+		local x, y = 0, 0
+		for _, c in ipairs(self.map.cities) do
+			x = x + c.x
+			y = y + c.y
+		end
+		self.cx = x / #self.map.cities
+		self.cy = y / #self.map.cities
+		if lvl.on_enter then
+			lvl.on_enter(self)
+		end
+	else
+		set_state(theend)
+	end
+end
+
+function game:restart()
+	if self.map then self.map.finished = false end
+	local lvl = self.levels[self.current_level]
+	if lvl then
 		if lvl.on_enter then
 			lvl.on_enter(self)
 		end
@@ -47,27 +68,30 @@ function game:load_next_level()
 	end
 end
 
-TIME = 0
 function game:update(dt)
-	TIME = TIME + dt
 	self.map:update(dt)
 	if self.selectedcity then
 		self:try_hl_link()
 	end
 end
 
-function nearline(x, y, endx, endy, px, py, radius)
-	if x > endx then
-		x, endx = endx, x
-		y, endy = endy, y
+-- http://stackoverflow.com/a/2233538
+function nearline(x1, y1, x2, y2, x3, y3, d)
+	local px = x2-x1
+	local py = y2-y1
+	local something = px*px + py*py
+	local u =  ((x3 - x1) * px + (y3 - y1) * py) / something
+	if u > 1 then
+		u = 1
+	elseif u < 0 then
+		u = 0
 	end
-	local f = function(somex)
-		return (endy - y) / (endx - x) * (somex - x) + y
-	end
-	local g = function(somey)
-		return (endx - x) / (endy - y) * (somey - y) + x
-	end
-	return math.abs(f(px) - py) < radius or math.abs(g(py) - px) < radius
+	local x = x1 + u * px
+	local y = y1 + u * py
+	local dx = x - x3
+	local dy = y - y3
+	local dist = dx*dx + dy*dy
+	return dist <= d
 end
 
 function game:try_hl_link()
@@ -78,14 +102,17 @@ function game:try_hl_link()
 	local c = self.selectedcity
 	local x, y = drystal.screen2scene(mx, my)
 
+	if math.distance(x, y, c.x, c.y) < c.size*math.sqrt(2)/2 then
+		return
+	end
 	for _, c2 in ipairs(self.map.cities) do
-		if c ~= c2 and nearline(c.x, c.y, c2.x, c2.y, x, y, 6) then
+		if c ~= c2 and nearline(c.x, c.y, c2.x, c2.y, x, y, 10) and math.distance(x,y,c2.x,c2.y) > c2.size*math.sqrt(2)/2 then
 			local t = toolbar.type
-			if c2.stats[t] == -1 or c.stats[t] == -1 then
+			if not c2:want(t) or not c:want(t) then
 				return
 			end
 			local l = self.map:get_link(c, c2)
-			if not l.bought then
+			if l and not l.bought then
 				l.type = toolbar.type
 				self.hllink = l
 				self.hllink.hl = true
@@ -120,6 +147,21 @@ function game:draw()
 			bigfont:draw('Press Space to end the game', 20, H*.9)
 		end
 	end
+	do
+		local bx, by = W-100, 75
+		drystal.set_color(0,0,0)
+		if self.hlrestart then
+			drystal.set_alpha(100)
+			drystal.draw_rect(bx, by, W-bx-5, 35)
+		end
+		drystal.set_alpha(255)
+		drystal.set_line_width(2)
+		drystal.draw_square(bx, by, W-bx-5, 35)
+		drystal.set_alpha(255)
+		drystal.set_color(255,255,255)
+		font:draw('Restart', bx+10, by+6)
+	end
+
 
 	drystal.camera.x = - self.cx + drystal.screen.w / 2
 	drystal.camera.y = - self.cy + drystal.screen.h / 2
@@ -156,16 +198,50 @@ end
 
 function game:buy_link(link)
 	local t = toolbar.type
-	if link.c2.stats[t] == -1 or link.c1.stats[t] == -1 then
+	if not link.c2:want(t) or not link.c1:want(t) then
 		return
 	end
-	--self.map.capital.stats[LinkType.money] = self.map.capital.stats[LinkType.money] - 10
+	local c1count = 1
+	if link.c1.is_node then
+		for _, l in ipairs(self.map.links) do
+			if l.c1 == link.c1 or l.c2 == link.c1 then
+				c1count = c1count + 1
+			end
+		end
+	end
+	local c2count = 1
+	if link.c2.is_node then
+		for _, l in ipairs(self.map.links) do
+			if l.c1 == link.c2 or l.c2 == link.c2 then
+				c2count = c2count + 1
+			end
+		end
+	end
+
 	local i = lume.find(self.map.possiblelinks, link)
 	if i then
 		table.remove(self.map.possiblelinks, i)
 		table.insert(self.map.links, link)
 		link.type = toolbar.type
 		link.bought = true
+		print(c1count, c2count)
+		local j = 1
+		while j <= #self.map.possiblelinks do
+			local l = self.map.possiblelinks[j]
+			print(link.c1, l.c1,l.c2)
+			if c1count == 2 and (l.c1 == link.c1 or l.c2 == link.c1) then
+				self.map.possiblelinks[j] = self.map.possiblelinks[#self.map.possiblelinks]
+				self.map.possiblelinks[#self.map.possiblelinks] = nil
+				j = j - 1
+				print('remove1')
+			elseif c2count == 2 and (l.c1 == link.c2 or l.c2 == link.c2) then
+				self.map.possiblelinks[j] = self.map.possiblelinks[#self.map.possiblelinks]
+				self.map.possiblelinks[#self.map.possiblelinks] = nil
+				print('remove2')
+				j = j - 1
+			end
+			j = j + 1
+		end
 	end
 end
 
@@ -193,6 +269,14 @@ function game:mouse_motion(x, y, dx, dy)
 	mx = x
 	my = y
 	toolbar.mouse_motion(x, y)
+
+	do
+		self.hlrestart = false
+		local bx, by = W-100, 75
+		if x > bx and y > by and x < W-5 and y < by+35 then
+			self.hlrestart = true
+		end
+	end
 end
 
 function game:mouse_release(x, y, b)
@@ -204,6 +288,13 @@ function game:mouse_release(x, y, b)
 	elseif b == 5 then
 		--self.zoom = self.zoom * .9
 		toolbar.next()
+	elseif b == 1 then
+		do
+			local bx, by = W-100, 75
+			if x > bx and y > by and x < W-5 and y < by+35 then
+				self:restart()
+			end
+		end
 	end
 end
 

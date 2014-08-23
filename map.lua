@@ -1,5 +1,6 @@
 local LinkType = require 'linktype'
 local City = require 'city'
+local Node = require 'node'
 local Objective = require 'objective'
 local Link = require 'link'
 local Map = class 'Map'
@@ -26,6 +27,15 @@ function Map:add_city(...)
 	end
 	table.insert(self.cities, c)
 	return c
+end
+
+function Map:add_node(...)
+	local n = Node:new(...)
+	for _, c2 in ipairs(self.cities) do
+		self:add_possiblelink(n, c2)
+	end
+	table.insert(self.cities, n)
+	return n
 end
 
 function Map:add_link(...)

@@ -15,6 +15,7 @@ function City:init(name, x, y, initstats, color, is_capital)
 	self.is_capital = is_capital
 	self.size = is_capital and 80 or 50
 	self.selected = false
+	self.give=.1
 end
 
 function City:update(dt)
@@ -34,13 +35,16 @@ function City:update(dt)
 end
 
 function City:draw()
+	drystal.set_alpha(255)
+	drystal.set_color(self.colordark)
+	drystal.draw_rect(self.x - self.size / 2 - 2, self.y - self.size / 2 - 2, self.size+4, self.size+4)
+
 	local t = math.floor(TIME * 5)
 	if self.selected and t % 2 == 0 then
 		drystal.set_color(self.colordark)
 	else
 		drystal.set_color(self.color)
 	end
-	drystal.set_alpha(255)
 	drystal.draw_rect(self.x - self.size / 2, self.y - self.size / 2, self.size, self.size)
 end
 
@@ -92,6 +96,10 @@ function City:food()
 end
 function City:money()
 	return self.stats[LinkType.money]
+end
+
+function City:want(t)
+	return self.stats[t] ~= -1
 end
 
 return City

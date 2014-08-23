@@ -6,7 +6,7 @@ local objectives = {
 function objectives.draw(map)
 	drystal.set_alpha(255)
 	drystal.set_color(220, 220, 220)
-	local x, y = 5, 100
+	local x, y = 5, 75
 	font:draw('Objectives:', x, y)
 	y = y + 30
 	x = x + 20
