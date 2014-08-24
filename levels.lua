@@ -210,7 +210,7 @@ return {
 			music.play('m4.ogg')
 		end,
 		load=function (self)
-			local c1 = self:add_city('London', 0, 0, stats(9000, 9000, 9000), C.firebrick)
+			local c1 = self:add_city('London', 0, 0, stats(900, 900, 900), C.firebrick)
 			local c2 = self:add_city('Oxford', 450, -150, stats(0, 0, 0), C.darkturquoise)
 			local c3 = self:add_city('Cardiff', 420, 220, stats(0, 0, 0), C.greenyellow)
 			local c4 = self:add_city('Plymouth', 620, 220, stats(0, 0, 0), C.lightskyblue)
