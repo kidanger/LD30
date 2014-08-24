@@ -17,7 +17,7 @@ function City:init(name, x, y, initstats, color, is_capital)
 	self.is_capital = is_capital
 	self.size = is_capital and 80 or 50
 	self.selected = false
-	self.give=.2
+	self.give=.4
 end
 
 function City:update(dt)
@@ -26,9 +26,6 @@ function City:update(dt)
 			if self.stats[t] > 0 then
 				self.stats[t] = self.stats[t] + dt
 			end
-			--if self.stats[t] > 200 then
-				--self.stats[t] = 200
-			--end
 		end
 	end
 end
@@ -104,7 +101,7 @@ function City:want(t)
 end
 
 function City:need(t, from)
-	return self.needs[t] > 0 and self.needs[t]*(1+self.give) >= self.stats[t]
+	return self.needs[t] > 0 and self.needs[t] > self.stats[t]
 end
 
 return City

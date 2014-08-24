@@ -37,7 +37,7 @@ function Node:need(t, from)
 	if self.c1 == from then
 		return self.c2:need(t, self)
 	elseif self.c2 == from then
-		return self.c2:need(t, self)
+		return self.c1:need(t, self)
 	end
 	return false
 end

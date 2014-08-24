@@ -30,11 +30,11 @@ function game:init()
 end
 
 function game:load_next_level()
-	toolbar.reset()
 	if self.map then self.map.finished = false end
 	self.current_level = self.current_level + 1
 	local lvl = self.levels[self.current_level]
 	if lvl then
+		toolbar.reset()
 		self.map = Map:new(lvl.load)
 		self:center_cam()
 		self.selectedcity=nil
@@ -45,7 +45,7 @@ function game:load_next_level()
 	else
 		set_state(theend)
 		music.play('m4.ogg')
-		drystal.store('links', {lvl=0})
+		drystal.store('links', {lvl=0,mute=music.is_mute()})
 	end
 end
 
@@ -60,11 +60,10 @@ function game:center_cam()
 end
 
 function game:restart()
-	toolbar.reset()
-	music.plop('restart.wav')
 	if self.map then self.map.finished = false end
 	local lvl = self.levels[self.current_level]
 	if lvl then
+		toolbar.reset()
 		self.map = Map:new(lvl.load)
 		self:center_cam()
 		self.selectedcity=nil
@@ -76,6 +75,7 @@ function game:restart()
 		set_state(theend)
 		music.play('intro.ogg')
 	end
+	collectgarbage()
 end
 
 function game:update(dt)
@@ -116,7 +116,7 @@ function game:try_hl_link()
 		return
 	end
 	for _, c2 in ipairs(self.map.cities) do
-		if c ~= c2 and nearline(c.x, c.y, c2.x, c2.y, x, y, 10) and math.distance(x,y,c2.x,c2.y) > c2.size*math.sqrt(2)/2 then
+		if c ~= c2 and nearline(c.x, c.y, c2.x, c2.y, x, y, 20) and math.distance(x,y,c2.x,c2.y) > c2.size*math.sqrt(2)/2 then
 			local t = toolbar.type
 			if not c2:want(t) or not c:want(t) then
 				return
@@ -153,10 +153,12 @@ function game:draw()
 	if self.map.finished then
 		drystal.set_alpha(lume.smooth(20, 150, math.sin(TIME*5)*.5+.5))
 		drystal.set_color(255,255,255)
+		drystal.set_alpha(lume.smooth(20, 150, math.sin(TIME*5)*.5+.5))
 		if self.current_level < #self.levels then
-			bigfont:draw('Press Space to play the next level', 20, H*.9)
+			bigfont:draw('Click or press space...', 20, H*.9)
 		else
-			bigfont:draw('Press Space to end the game', 20, H*.9)
+			drystal.set_alpha(lume.smooth(20, 150, math.sin(TIME*5)*.5+.5))
+			bigfont:draw('Click or press space...', 20, H*.9)
 		end
 	end
 	do
@@ -206,13 +208,13 @@ function game:select_city(x, y)
 			self.hllink.hl = false
 			self.hllink = nil
 		end
-		music.plop('unselect.wav', 0.5)
+		music.plop('unselect.wav', 0.35)
 	end
 	for _, c in ipairs(self.map.cities) do
 		if math.distance(x, y, c.x, c.y) < c.size*math.sqrt(2)/2 then
 			self.selectedcity = c
 			self.selectedcity.selected = true
-			music.plop('select.wav', 0.5)
+			music.plop('select.wav', 0.35)
 			break
 		end
 	end
@@ -246,7 +248,7 @@ function game:buy_link(link)
 		table.insert(self.map.links, link)
 		link.type = toolbar.type
 		link.bought = true
-		music.plop('buy.wav', .7)
+		music.plop('buy.wav', .5)
 		if link.on_buy then
 			link:on_buy(self)
 		end
@@ -271,6 +273,10 @@ function game:mouse_press(x, y, b)
 	if b == 3 then
 		self.move = true
 	elseif b == 1 then
+		if self.map.finished then
+			self:load_next_level()
+			return
+		end
 		if self.hllink then
 			self:buy_link(self.hllink)
 			self.hllink.hl = false
@@ -312,6 +318,7 @@ function game:mouse_release(x, y, b)
 		do
 			local bx, by = W-100, 75
 			if x > bx and y > by and x < W-5 and y < by+35 then
+				music.plop('restart.wav')
 				self:restart()
 			end
 		end

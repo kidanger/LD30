@@ -66,7 +66,7 @@ return {
 				if l.type == LinkType.money then
 					local c = Chat:new(self, {
 						'Great. Now look at the objectives.'..
-						'\nYou have to '..CC('validate', C.green)..' each one in order to go\nto the next level.',
+						'\nYou have to wait validation of objectives in order to go\nto the next level.',
 					}, nil, nil, W*.09,H*.19)
 					set_state(c)
 				else
@@ -84,7 +84,7 @@ return {
 			self.capital = self:add_city('New York', 0, 0, stats(0, -1, 0), C.indianred, true)
 			local phil = self:add_city('Philadelphia', 260, -100, stats(80, -1, 90), C.coral:lighter())
 			local nash = self:add_city('Boston', 450, 100, stats(0, -1, 0), C.dodgerblue)
-			self.capital.stats[LinkType.money] = 50
+			self.capital.stats[M] = 50
 			self.capital.needs[M] = 150
 			nash.needs[F] = 50
 
@@ -172,7 +172,6 @@ return {
 			music.play('m3.ogg')
 		end,
 		load=function (self)
-			music.play('m4.ogg')
 			local sing = self:add_city('Singapore', 0, 250, stats(0, 0, 0), C.darkslategray)
 			local tokyo = self:add_city('Tokyo', 400, 0, stats(0, 0, 50), C.pink:darker())
 			local hong = self:add_city('Hong Kong', 0, 0, stats(0,50,0), C.lightblue)
@@ -208,7 +207,7 @@ return {
 
 	{
 		on_enter=function(self)
-			music.play('m3.ogg')
+			music.play('m4.ogg')
 		end,
 		load=function (self)
 			local c1 = self:add_city('A', 0, 0, stats(9000, 9000, 9000), C.white)
@@ -219,9 +218,9 @@ return {
 			local w = self:add_wall(230, 50, 230, 350)
 			local w = self:add_wall(410, 100, 590, 100)
 			local n = self:add_node('Node', 150, -110)
-			local n = self:add_node('Node', 350, -150)
+			local n = self:add_node('Node', 320, -180)
 			local n = self:add_node('Node', 310, 0)
-			local n = self:add_node('Node', 600, -150)
+			local n = self:add_node('Node', 600, -180)
 			local n = self:add_node('Node', (c3.x+c4.x)/2, (c3.y+c4.y)/2+50)
 			c2.needs[T] = 500
 			c3.needs[T] = 500

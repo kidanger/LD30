@@ -32,7 +32,7 @@ function Chat:draw()
 	local w, h = drystal.screen.w, drystal.screen.h
 	drystal.draw_rect(0, 0, w, h)
 
-	drystal.set_alpha(150)
+	drystal.set_alpha(200)
 	drystal.set_color(drystal.colors.black)
 	drystal.draw_rect(W*.015,H*.7,W*.970,H*.28)
 
