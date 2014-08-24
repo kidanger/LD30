@@ -1,11 +1,17 @@
 drystal = require 'drystal'
 
+if drystal.is_web then
+	drystal.run_js('document.getElementById("load").style.display="none";')
+	drystal.run_js('document.getElementById("canvas").style.display="block";')
+end
+
 W = 900
 H = 600
 drystal.resize(W, H)
 smallfont = drystal.load_font('font.ttf', 14)
 font = drystal.load_font('font.ttf', 26)
 bigfont = drystal.load_font('font.ttf', 38)
+vbigfont = drystal.load_font('font.ttf', 58)
 
 class = require 'middleclass'
 lume = require 'lume'
@@ -83,4 +89,7 @@ function drystal.mouse_motion(...)
 		state:mouse_motion(...)
 	end
 	music.mouse_motion(...)
+end
+function drystal.atexit()
+	drystal.store('links', {lvl=game.current_level-1,mute=music.is_mute()})
 end

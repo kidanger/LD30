@@ -30,6 +30,27 @@ function City:update(dt)
 	end
 end
 
+function City:funk()
+	drystal.set_alpha(255)
+	drystal.set_color(255,255,255)
+	for i=1, 30 do
+		local angle = lume.random(math.pi*2)
+		local angle2 = lume.random(math.pi/2)
+		local l1 = lume.random(100,200)
+		local l2 = lume.random(100,200)
+		local x = self.x + math.cos(angle) * l1
+		local y = self.y + math.sin(angle) * l2
+		local xx = self.x + math.cos(angle+angle2) * l1
+		local yy = self.y + math.sin(angle+angle2) * l2
+		drystal.set_alpha(30)
+		local h, s, l = self.color:hsl()
+		h = h + lume.random(-20,20)
+		l = .3
+		drystal.set_color(drystal.new_color('hsl', h, s, l))
+		drystal.draw_triangle(self.x, self.y, x, y, xx, yy)
+	end
+end
+
 function City:draw()
 	drystal.set_alpha(255)
 	drystal.set_color(self.colordark)

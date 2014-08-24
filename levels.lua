@@ -66,7 +66,7 @@ return {
 				if l.type == LinkType.money then
 					local c = Chat:new(self, {
 						'Great. Now look at the objectives.'..
-						'\nYou have to wait validation of objectives in order to go\nto the next level.',
+						'\nYou have to wait the validation of objectives in order\nto go to the next level.',
 					}, nil, nil, W*.09,H*.19)
 					set_state(c)
 				else
@@ -105,7 +105,7 @@ return {
 		load=function (self)
 			local paris = self:add_city('Paris', 0, 0, stats(0, 0, 0), C.darkslategray, true)
 			self.capital = paris
-			local nancy = self:add_city('Nancy', 290, 20, stats(50, 0, 0), C.pink:darker())
+			local nancy = self:add_city('Caen', -290, 20, stats(50, 0, 0), C.pink:darker())
 			local marseille = self:add_city('Marseille', 150, 200, stats(10, 0, 50), C.orange)
 			local lille = self:add_city('Lille', 50, -200, stats(0, 10, 0), C.green, false)
 			paris.needs[F] = 50
@@ -210,10 +210,10 @@ return {
 			music.play('m4.ogg')
 		end,
 		load=function (self)
-			local c1 = self:add_city('A', 0, 0, stats(9000, 9000, 9000), C.white)
-			local c2 = self:add_city('B', 450, -150, stats(0, 0, 0), C.white)
-			local c3 = self:add_city('C', 420, 220, stats(0, 0, 0), C.white)
-			local c4 = self:add_city('D', 620, 220, stats(0, 0, 0), C.white)
+			local c1 = self:add_city('London', 0, 0, stats(9000, 9000, 9000), C.firebrick)
+			local c2 = self:add_city('Oxford', 450, -150, stats(0, 0, 0), C.darkturquoise)
+			local c3 = self:add_city('Cardiff', 420, 220, stats(0, 0, 0), C.greenyellow)
+			local c4 = self:add_city('Plymouth', 620, 220, stats(0, 0, 0), C.lightskyblue)
 			local w = self:add_wall(230, -250, 230, -50)
 			local w = self:add_wall(230, 50, 230, 350)
 			local w = self:add_wall(410, 100, 590, 100)
@@ -241,6 +241,61 @@ return {
 			end)
 			self:add_objective('Nocity wants food. :(', function (map)
 				return true
+			end)
+		end,
+	},
+
+	{
+		on_enter=function(self)
+			music.play('m4.ogg')
+		end,
+		load=function (self)
+			local c1 = self:add_city('Oslo', 0, 0, stats(0,120,0), C.darkorchid, true)
+			local c2 = self:add_city('Stockholm', 400, 0, stats(0, 0, 60), C.lightseagreen, true)
+			local w = self:add_wall(200, 100, 140, 200)
+			local w = self:add_wall(200, 100, 260, 200)
+			local w = self:add_wall(200, 250, 200, 500)
+			local n = self:add_node('Node', 200, 160)
+			local n = self:add_node('Node', 80, 340)
+			local n = self:add_node('Node', 400-80, 340)
+			c1.needs[M] = 75
+			c2.needs[T] = 150
+
+			self:add_objective('Be happy.', function (map)
+				return true
+			end)
+			self:add_objective('Kill the gnomes.', function (map)
+				return true
+			end)
+			self:add_objective('Have fun.', function (map)
+				return math.sin(TIME) > -.5
+			end)
+			self:add_objective('Eat food.', function (map)
+				return true
+			end)
+			self:add_objective('Sleep.', function (map)
+				return true
+			end)
+			self:add_objective('Blink an eye.', function (map)
+				return math.random() < 0.01
+			end)
+			self:add_objective('Fun!', function (map)
+				return c2.stats[T] >= c2.needs[T] / 2
+			end)
+			self:add_objective('Kill the orcs too.', function (map)
+				return true
+			end)
+			self:add_objective('Lots of fun!', function (map)
+				return c2.stats[T] >= c2.needs[T]
+			end)
+			self:add_objective('Have more fun.', function (map)
+				return math.sin(TIME) > -.1
+			end)
+			self:add_objective('Play other games.', function (map)
+				return true
+			end)
+			self:add_objective('Moneeeeeey!', function (map)
+				return c1.stats[M] >= c1.needs[M]
 			end)
 		end,
 	},

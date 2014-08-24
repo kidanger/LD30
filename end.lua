@@ -22,6 +22,7 @@ function state:update(dt)
 	end
 end
 
+local str = 'You rescued the cities!'
 function state:draw()
 	state.game:draw()
 
@@ -34,7 +35,6 @@ function state:draw()
 	drystal.set_alpha(255)
 	drystal.set_color(255,255,255)
 
-	local str = 'You rescued the cities!'
 	local ww = bigfont:sizeof(str)
 	bigfont:draw(take(str, state.i), w/2-ww/2, h*.35)
 	if state.i - 10 >= #str then
@@ -50,10 +50,12 @@ function state:draw()
 end
 
 function state:nnn()
-	self.game.current_level = 0
-	local menu = require 'menu'
-	menu:init()
-	set_state(menu)
+	if state.i - 50 >= #str then
+		self.game.current_level = 0
+		local menu = require 'menu'
+		menu:init()
+		set_state(menu)
+	end
 end
 
 function state:mouse_press(x, y, b)

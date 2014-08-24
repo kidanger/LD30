@@ -106,21 +106,34 @@ function Map:update(dt)
 end
 
 function Map:draw()
+	if not self.buffer then
+		self.buffer = drystal.new_buffer()
+		self.buffer:use()
+		for _, c in ipairs(self.cities) do
+			if c.funk then c:funk() end
+		end
+		self.buffer:upload_and_free()
+		drystal.use_default_buffer()
+		collectgarbage()
+	end
+	self.buffer:draw()
+	drystal.set_alpha(255)
+
 	for _, l in ipairs(self.links) do
 		l:draw()
-	end
-	for _, l in ipairs(self.possiblelinks) do
-		if l.hl then
-			l:draw()
-		end
 	end
 
 	for _, l in ipairs(self.possiblelinks) do
 		if l.c1.selected or l.c2.selected then
-			drystal.set_alpha(100)
-			drystal.set_color(0,0,0)
+			drystal.set_alpha(250)
+			drystal.set_color(200,200,200)
 			drystal.set_line_width(5)
 			drystal.draw_line(l.c1.x, l.c1.y, l.c2.x, l.c2.y)
+		end
+	end
+	for _, l in ipairs(self.possiblelinks) do
+		if l.hl then
+			l:draw()
 		end
 	end
 	for _, c in ipairs(self.cities) do

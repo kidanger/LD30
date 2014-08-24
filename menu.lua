@@ -83,8 +83,10 @@ function menu:draw()
 
 	drystal.set_color(220,220,220)
 	drystal.set_alpha(255)
-	local w,h = bigfont:sizeof('{shadowx:3|shadowy:3|Rescue the cities}')
-	bigfont:draw('{shadowx:3|shadowy:3|Rescue the cities}', W*.5-w/2, H*.03)
+	local w,h = vbigfont:sizeof('{shadowx:3|shadowy:3|Tronnected}')
+	vbigfont:draw('{shadowx:5|shadowy:5|Tronnected}', W*.5-w/2, H*.03)
+	local w,h = font:sizeof('{shadowx:3|shadowy:3|Rescue the cities}')
+	font:draw('{shadowx:3|shadowy:3|Rescue the cities}', W*.5-w/2, H*.12)
 
 	local t = math.floor(TIME*3)
 	if TIME > 2 then

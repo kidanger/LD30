@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>LD30 - Connected Cities</title>
+    <title>Tronnected - Connected Cities</title>
     <style>
       .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
       body { background: black; color: grey; }
@@ -44,6 +44,124 @@
     </style>
   </head>
   <body>
+
+<style>
+#bowlG{
+position:relative;
+width:80px;
+height:80px;
+}
+
+#bowl_ringG{
+position:absolute;
+width:80px;
+height:80px;
+border:7px solid #FFFFFF;
+-moz-border-radius:80px;
+-webkit-border-radius:80px;
+-ms-border-radius:80px;
+-o-border-radius:80px;
+border-radius:80px;
+}
+
+.ball_holderG{
+position:absolute;
+width:21px;
+height:80px;
+left:29px;
+top:0px;
+-moz-animation-name:ball_moveG;
+-moz-animation-duration:1.2s;
+-moz-animation-iteration-count:infinite;
+-moz-animation-timing-function:linear;
+-webkit-animation-name:ball_moveG;
+-webkit-animation-duration:1.2s;
+-webkit-animation-iteration-count:infinite;
+-webkit-animation-timing-function:linear;
+-ms-animation-name:ball_moveG;
+-ms-animation-duration:1.2s;
+-ms-animation-iteration-count:infinite;
+-ms-animation-timing-function:linear;
+-o-animation-name:ball_moveG;
+-o-animation-duration:1.2s;
+-o-animation-iteration-count:infinite;
+-o-animation-timing-function:linear;
+animation-name:ball_moveG;
+animation-duration:1.2s;
+animation-iteration-count:infinite;
+animation-timing-function:linear;
+}
+
+.ballG{
+position:absolute;
+left:0px;
+top:-19px;
+width:32px;
+height:32px;
+background:#F2F2F2;
+-moz-border-radius:27px;
+-webkit-border-radius:27px;
+-ms-border-radius:27px;
+-o-border-radius:27px;
+border-radius:27px;
+}
+
+@-moz-keyframes ball_moveG{
+0%{
+-moz-transform:rotate(0deg)}
+
+100%{
+-moz-transform:rotate(360deg)}
+
+}
+
+@-webkit-keyframes ball_moveG{
+0%{
+-webkit-transform:rotate(0deg)}
+
+100%{
+-webkit-transform:rotate(360deg)}
+
+}
+
+@-ms-keyframes ball_moveG{
+0%{
+-ms-transform:rotate(0deg)}
+
+100%{
+-ms-transform:rotate(360deg)}
+
+}
+
+@-o-keyframes ball_moveG{
+0%{
+-o-transform:rotate(0deg)}
+
+100%{
+-o-transform:rotate(360deg)}
+
+}
+
+@keyframes ball_moveG{
+0%{
+transform:rotate(0deg)}
+
+100%{
+transform:rotate(360deg)}
+
+}
+
+</style>
+      <center><div id='load'>
+<div id="bowlG">
+<div id="bowl_ringG">
+<div class="ball_holderG">
+<div class="ballG">
+</div>
+</div>
+</div>
+</div>
+<h1>Loading... Please wait...</h1></div></center>
     <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" ></canvas>
 
     <script type='text/javascript'>

@@ -133,6 +133,7 @@ function game:try_hl_link()
 end
 
 function game:draw()
+	drystal.set_alpha(255)
 	drystal.set_color(backcolor)
 	drystal.draw_background()
 
@@ -175,6 +176,10 @@ function game:draw()
 		drystal.set_color(255,255,255)
 		font:draw('Restart', bx+10, by+6)
 	end
+
+	drystal.set_color(200,200,200)
+	drystal.set_alpha(255)
+	font:draw('{shadowx:2|shadowy:2|Level: ' .. self.current_level .. '/' .. #self.levels .. '}', 6, 6)
 end
 function game:set_cam()
 	drystal.camera.x = - self.cx + drystal.screen.w / 2
