@@ -61,7 +61,7 @@ local function drawvalue(self, t, dx, dy)
 	y = y - h / 2
 	if self.produces[LinkType[t]] > 0 then
 		smallfont:draw('{shadowx:1|shadowy:1|'..str..'}{r:0|b:0|g:' .. lume.smooth(0, 200, math.sin(TIME)*.5+.5).. '| +}', x, y)
-	elseif self.needs[LinkType[t]] > self.stats[LinkType[t]] then
+	elseif self.stats[LinkType[t]] >= 0 and self.needs[LinkType[t]] > self.stats[LinkType[t]] then
 		smallfont:draw('{shadowx:1|shadowy:1|'..str..'}{g:0|b:0|r:' .. lume.smooth(0, 200, math.sin(TIME)*.5+.5).. '| x}', x, y)
 	else
 		smallfont:draw('{shadowx:1|shadowy:1|'..str..'}', x, y)

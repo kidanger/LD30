@@ -110,10 +110,10 @@ function music.play(f)
 		if not drystal.file_exists(f) then
 			if drystal.is_web then
 				print('i dont have', f)
-				return
 			else
 				print(f, 'doesn\' exist')
 			end
+			return
 		end
 		print('load', f)
 		music.songs[f] = assert(drystal.load_music(f))
