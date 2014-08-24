@@ -135,6 +135,7 @@ return {
 
 	{
 		on_enter=function(self)
+			music.play('m3.ogg')
 			local c1 = Chat:new(self, {
 				'And that is a WALL! Bouh, walls are bad!'
 			}, nil, nil, W*.5, H*.55)

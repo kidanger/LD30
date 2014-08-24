@@ -43,6 +43,7 @@ function game:load_next_level()
 		end
 	else
 		set_state(theend)
+		music.play('m4.ogg')
 	end
 end
 
@@ -57,6 +58,7 @@ function game:center_cam()
 end
 
 function game:restart()
+	music.plop('restart.wav')
 	if self.map then self.map.finished = false end
 	local lvl = self.levels[self.current_level]
 	if lvl then
@@ -68,6 +70,7 @@ function game:restart()
 		end
 	else
 		set_state(theend)
+		music.play('m4.ogg')
 	end
 end
 
@@ -166,9 +169,8 @@ function game:draw()
 		drystal.set_color(255,255,255)
 		font:draw('Restart', bx+10, by+6)
 	end
-
-	music.draw()
-
+end
+function game:set_cam()
 	drystal.camera.x = - self.cx + drystal.screen.w / 2
 	drystal.camera.y = - self.cy + drystal.screen.h / 2
 	drystal.camera.zoom = self.zoom
@@ -195,11 +197,13 @@ function game:select_city(x, y)
 			self.hllink.hl = false
 			self.hllink = nil
 		end
+		music.plop('unselect.wav', 0.5)
 	end
 	for _, c in ipairs(self.map.cities) do
 		if math.distance(x, y, c.x, c.y) < c.size*math.sqrt(2)/2 then
 			self.selectedcity = c
 			self.selectedcity.selected = true
+			music.plop('select.wav', 0.5)
 			break
 		end
 	end
@@ -233,6 +237,7 @@ function game:buy_link(link)
 		table.insert(self.map.links, link)
 		link.type = toolbar.type
 		link.bought = true
+		music.plop('buy.wav', .7)
 		if link.on_buy then
 			link:on_buy(self)
 		end

@@ -33,6 +33,11 @@ function drystal.draw()
 	drystal.draw_background()
 
 	state:draw()
+	music.draw()
+	drystal.camera.reset()
+	if state.set_cam then
+		state:set_cam()
+	end
 end
 
 function drystal.key_press(k)
@@ -45,9 +50,15 @@ function drystal.key_release(k)
 	if state.key_release then
 		state:key_release(k)
 	end
+	if k == 'm' then
+		music.mute()
+	end
 end
 
 function drystal.mouse_press(...)
+	if music.mouse_press(...) then
+		return
+	end
 	if state.mouse_press then
 		state:mouse_press(...)
 	end
@@ -63,5 +74,6 @@ function drystal.mouse_motion(...)
 	if state.mouse_motion then
 		state:mouse_motion(...)
 	end
+	music.mouse_motion(...)
 end
 
