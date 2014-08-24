@@ -45,8 +45,8 @@ function Chat:draw()
 	bigfont:draw(self.texts[self.i], W*.03, H*.72)
 
 	local t = math.floor(TIME*3)
-	if TIME-self.time > 2 and t%3 ~= 0 then
-		drystal.set_alpha(255)
+	if TIME-self.time > 2 then
+		drystal.set_alpha(lume.smooth(20, 150, math.sin(TIME*5)*.5+.5))
 		drystal.set_color(255,255,255)
 		font:draw('Click or press space...', W*.973, H*.935, 3)
 	end
@@ -70,6 +70,16 @@ end
 function Chat:key_press(k)
 	if k == 'space' then
 		self:nnn()
+	elseif k == 'b' then
+		self.game.current_level = self.game.current_level - 1
+		if self.game.current_level <= 0 then
+			self.game.current_level = 1
+		end
+		set_state(self.game)
+		self.game:restart()
+	elseif k == 'n' then
+		set_state(self.game)
+		self.game:load_next_level()
 	end
 end
 

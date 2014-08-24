@@ -5,17 +5,44 @@ local music = {
 	want=nil,
 	sounds={},
 }
+local fade=0
 local mute = false
 local volume = 1
 local hl = false
 
 local mmm = {
+	'intro.ogg',
 	'm1.ogg',
 	'm2.ogg',
 	'm3.ogg',
 	'm4.ogg',
 }
+function vol(v)
+	volume = v
+	if not mute then
+		drystal.set_music_volume(v)
+	end
+end
 function music.update(dt)
+	if fade > 0 then
+		if fade < 1 and fade + dt > 1 then
+			for _, s in pairs(music.songs) do
+				s:stop()
+			end
+			music.songs[music.playing]:play(true)
+		end
+		fade = fade + dt
+		if fade > 1 then
+			if fade > 2 then
+				fade = 0
+			else
+				vol(fade - 1)
+			end
+		else
+			vol(1 - fade)
+		end
+	end
+
 	if not next(music.req) and drystal.is_web then
 		for _, f in ipairs(mmm) do
 			if not music.songs[f] then
@@ -27,7 +54,7 @@ function music.update(dt)
 end
 
 function music.draw()
-	if music.req[1] == music.want then
+	if music.req[1] == music.want and music.req[1] then
 		drystal.set_alpha(lume.smooth(20, 150, math.sin(TIME*5)*.5+.5))
 		drystal.set_color(200,200,200)
 		smallfont:draw('Downloading music...', W*.01, H*.97)
@@ -88,21 +115,18 @@ function music.play(f)
 		end
 		print('load', f)
 		music.songs[f] = assert(drystal.load_music(f))
-		print('OK load', f)
 	end
 	if music.playing then
-		music.songs[music.playing]:stop()
+		--music.songs[music.playing]:stop()
 		music.playing = nil
+		fade = 0.001
+	else
+		fade = 0.999
 	end
 
-	music.songs[f]:play(true)
+	--music.songs[f]:play(true)
 	music.playing = f
-	if mute then
-		drystal.set_music_volume(0)
-	else
-		drystal.set_music_volume(volume)
-	end
-	print('play', f)
+	print('play?', f, fade)
 end
 
 function music.mouse_motion(x, y)

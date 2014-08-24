@@ -12,9 +12,14 @@ function Link:init(c1, c2)
 	self.transfertime = -1
 	self.amount = 0
 	self.distance = math.distance(c1.x, c1.y, c2.x, c2.y)
+	self.wait = lume.random(5)
 end
 
 function Link:update(dt)
+	if self.wait > 0 then
+		self.wait = self.wait - dt
+		return
+	end
 	if self.transfertime == -1 then
 		local x1 = self.c1.stats[self.type] or 0
 		local x2 = self.c2.stats[self.type] or 0

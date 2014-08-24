@@ -12,7 +12,14 @@ lume = require 'lume'
 tween = require 'tween'
 local music = require 'music'
 
-local state = require 'game'
+local game = require 'game'
+local data = drystal.fetch('links')
+if data then
+	game.current_level = data.lvl
+end
+local menu = require 'menu'
+
+local state = menu
 
 function set_state(st)
 	state = st
@@ -76,4 +83,3 @@ function drystal.mouse_motion(...)
 	end
 	music.mouse_motion(...)
 end
-

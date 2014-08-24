@@ -13,7 +13,6 @@ local game = {
 	cy=0,
 	ccx=0,
 	ccy=0,
-	zoom=1,
 	move=false,
 	selectedcity=nil,
 	hllink=nil,
@@ -41,9 +40,11 @@ function game:load_next_level()
 		if lvl.on_enter then
 			lvl.on_enter(self)
 		end
+		drystal.store('links', {lvl=self.current_level-1})
 	else
 		set_state(theend)
 		music.play('m4.ogg')
+		drystal.store('links', {lvl=0})
 	end
 end
 
@@ -68,9 +69,10 @@ function game:restart()
 		if lvl.on_enter then
 			lvl.on_enter(self)
 		end
+		drystal.store('links', {lvl=self.current_level-1})
 	else
 		set_state(theend)
-		music.play('m4.ogg')
+		music.play('intro.ogg')
 	end
 end
 
@@ -136,7 +138,6 @@ function game:draw()
 	self.ccy = self.ccy + (self.cy-self.ccy)*.2
 	drystal.camera.x = - self.ccx + drystal.screen.w / 2
 	drystal.camera.y = - self.ccy + drystal.screen.h / 2
-	drystal.camera.zoom = self.zoom
 
 	self.map:draw()
 	drystal.camera.reset()
@@ -148,6 +149,7 @@ function game:draw()
 
 	objectives.draw(self.map)
 	if self.map.finished then
+		drystal.set_alpha(lume.smooth(20, 150, math.sin(TIME*5)*.5+.5))
 		drystal.set_color(255,255,255)
 		if self.current_level < #self.levels then
 			bigfont:draw('Press Space to play the next level', 20, H*.9)
@@ -173,7 +175,6 @@ end
 function game:set_cam()
 	drystal.camera.x = - self.cx + drystal.screen.w / 2
 	drystal.camera.y = - self.cy + drystal.screen.h / 2
-	drystal.camera.zoom = self.zoom
 end
 
 function game:key_press(k)
@@ -184,7 +185,13 @@ function game:key_press(k)
 	elseif k == 't' then
 		self.current_level = 0
 		self:load_next_level()
-	elseif k == 'y' then
+	elseif k == 'b' then
+		self.current_level = self.current_level - 1
+		if self.current_level <= 0 then
+			self.current_level = 1
+		end
+		self:restart()
+	elseif k == 'n' then
 		self:load_next_level()
 	end
 end
@@ -296,10 +303,8 @@ function game:mouse_release(x, y, b)
 	if b == 3 then
 		self.move = false
 	elseif b == 4 then
-		--self.zoom = self.zoom * 1.1
 		toolbar.prev()
 	elseif b == 5 then
-		--self.zoom = self.zoom * .9
 		toolbar.next()
 	elseif b == 1 then
 		do

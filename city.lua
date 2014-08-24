@@ -26,9 +26,9 @@ function City:update(dt)
 			if self.stats[t] > 0 then
 				self.stats[t] = self.stats[t] + dt
 			end
-			if self.stats[t] > 200 then
-				self.stats[t] = 200
-			end
+			--if self.stats[t] > 200 then
+				--self.stats[t] = 200
+			--end
 		end
 	end
 end
@@ -60,7 +60,9 @@ local function drawvalue(self, t, dx, dy)
 	x = x - w / 2
 	y = y - h / 2
 	if self.produces[LinkType[t]] > 0 then
-		smallfont:draw('{shadowx:1|shadowy:1|'..str..'}{r:0|b:0|g:' .. lume.smooth(0, 200, math.sin(TIME)*.5+.5).. '|+}', x, y)
+		smallfont:draw('{shadowx:1|shadowy:1|'..str..'}{r:0|b:0|g:' .. lume.smooth(0, 200, math.sin(TIME)*.5+.5).. '| +}', x, y)
+	elseif self.needs[LinkType[t]] > self.stats[LinkType[t]] then
+		smallfont:draw('{shadowx:1|shadowy:1|'..str..'}{g:0|b:0|r:' .. lume.smooth(0, 200, math.sin(TIME)*.5+.5).. '| x}', x, y)
 	else
 		smallfont:draw('{shadowx:1|shadowy:1|'..str..'}', x, y)
 	end
@@ -69,10 +71,10 @@ end
 function City:draw2()
 	drystal.set_alpha(255)
 
-	drawvalue(self, 'food', -1, -1)
+	drawvalue(self, 'food', 0, -1)
 	--drawvalue(self, 'nature', 1, -1)
-	drawvalue(self, 'technology', -1, 1)
-	drawvalue(self, 'money', 1, 1)
+	drawvalue(self, 'technology', 0, 0)
+	drawvalue(self, 'money', 0, 1)
 
 	drystal.set_color(255,255,255)
 	local w, h = font:sizeof(self.name)
@@ -80,7 +82,7 @@ function City:draw2()
 
 	if self.is_capital then
 		local w, h = smallfont:sizeof('Capital')
-		smallfont:draw('{shadowx:1|shadowy:1|Capital}', self.x-w/2, self.y-h/2)
+		smallfont:draw('{shadowx:1|shadowy:1|Capital}', self.x-w/2, self.y+self.size/2+h/2)
 	end
 end
 
@@ -102,7 +104,7 @@ function City:want(t)
 end
 
 function City:need(t, from)
-	return self.needs[t]*(1+self.give) >= self.stats[t]
+	return self.needs[t] > 0 and self.needs[t]*(1+self.give) >= self.stats[t]
 end
 
 return City
