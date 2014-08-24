@@ -9,26 +9,25 @@ function City:init(name, x, y, initstats, color, is_capital)
 	self.y = y
 	self.stats = lume.clone(initstats or {})
 	self.produces = initstats or {}
+	self.needs = {}
 	for _, t in pairs(LinkType) do
 		self.stats[t] = self.stats[t] or 0
+		self.needs[t] = 0
 	end
 	self.is_capital = is_capital
 	self.size = is_capital and 80 or 50
 	self.selected = false
-	self.give=.1
+	self.give=.2
 end
 
 function City:update(dt)
 	for t, n in pairs(self.produces) do
-		if n > 0 and t ~= LinkType.money then
+		if n > 0 then
 			if self.stats[t] > 0 then
 				self.stats[t] = self.stats[t] + dt
 			end
 			if self.stats[t] > 200 then
 				self.stats[t] = 200
-			end
-			if self.stats[t] > 0 then
-				self.stats[LinkType.money] = self.stats[LinkType.money] + math.log(self.stats[t]+1)*dt
 			end
 		end
 	end
@@ -100,6 +99,10 @@ end
 
 function City:want(t)
 	return self.stats[t] ~= -1
+end
+
+function City:need(t, from)
+	return self.needs[t]*(1+self.give) >= self.stats[t]
 end
 
 return City

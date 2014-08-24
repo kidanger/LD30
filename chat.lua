@@ -23,9 +23,9 @@ function Chat:draw()
 	self.game:draw()
 
 	if self.fade then
-		drystal.set_alpha(lume.smooth(0, 70, (TIME-self.time)*2))
+		drystal.set_alpha(lume.smooth(0, 120, (TIME-self.time)*2))
 	else
-		drystal.set_alpha(70)
+		drystal.set_alpha(120)
 	end
 	drystal.set_color(0,0,0)
 	drystal.camera.reset()

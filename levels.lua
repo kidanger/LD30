@@ -14,24 +14,26 @@ local C = drystal.colors
 local function CC(text, color)
 	return ('{r:%d|g:%d|b:%d|' .. text .. '}'):format(unpack(color))
 end
+local M = LinkType.money
+local F = LinkType.food
+local T = LinkType.technology
 
 return {
 	{
 		on_enter=function(self)
 			local phil = self.map:get_city('Philadelphia')
-			local nash = self.map:get_city('Nashua')
+			local nash = self.map:get_city('Boston')
 			local c1 = Chat:new(self, {
 				"Welcome! This is "..CC('New York', C.indianred)..".\nThis city needs money right now."..
 				"\nConnect it to other cities to share resources.",
-				'There is 4 types of links. A link can only tranfer\nresources of the same type.'
+				'There is 3 types of links. A link can only tranfer\nresources of the same type.'
 			}, self.map.capital.x, self.map.capital.y, W/2,H/2)
 			local c2 = Chat:new(self, {
-				CC('Philadelphia', phil.color).." produces "..CC('Food',LinkType.food.color)..'.'..
-				"\nThe more it produces and stock "..CC('Food', LinkType.food.color)..',\nthe more it gains ' .. CC('Money', LinkType.money.color)..'.'
+				CC('Philadelphia', phil.color).." produces "..CC('Food',LinkType.food.color)..' and '..CC('Money', LinkType.money.color) .. '.'
 			}, phil.x, phil.y, W/2,H/2)
 			local c3 = Chat:new(self, {
-				'And here is '..CC('Nashua', nash.color)..". It needs "..CC('Food',LinkType.food.color)..', badly.',
-				"Click on "..CC('Nashua', nash.color).." and link it to "..CC('Philadelphia', phil.color),
+				'And here is '..CC('Boston', nash.color)..". It needs "..CC('Food',LinkType.food.color)..', badly.',
+				"Click on "..CC('Boston', nash.color).." and link it to "..CC('Philadelphia', phil.color),
 			}, nash.x, nash.y, W/2,H/2)
 			c1.next = c2
 			c2.next = c3
@@ -44,7 +46,7 @@ return {
 					local c = Chat:new(self, {
 						'Err, I think you made a mistake. You had to use the\n'..CC('Food Link',LinkType.food.color)..
 						' in order to transfer '..CC('Food',LinkType.food.color).. ' from '..CC('Philadelphia', phil.color)..
-						'\nto ' .. CC('Nashua',nash.color) .. '.',
+						'\nto ' .. CC('Boston',nash.color) .. '.',
 						'Restart the level using the top right button.'
 					})
 					set_state(c)
@@ -66,47 +68,98 @@ return {
 			end
 		end,
 		load=function (self)
-			self.capital = self:add_city('New York', 0, 0, stats(-1, -1, -1, 0), C.indianred, true)
-			local phil = self:add_city('Philadelphia', 260, -100, stats(80, -1, -1, 0), C.coral:lighter())
-			local nash = self:add_city('Nashua', 450, 100, stats(0, -1, -1, 0), C.dodgerblue)
+			self.capital = self:add_city('New York', 0, 0, stats(0, -1, -1, 0), C.indianred, true)
+			local phil = self:add_city('Philadelphia', 260, -100, stats(80, -1, -1, 90), C.coral:lighter())
+			local nash = self:add_city('Boston', 450, 100, stats(0, -1, -1, 0), C.dodgerblue)
 			self.capital.stats[LinkType.money] = 50
-			nash.stats[LinkType.money] = 50
+			self.capital.needs[M] = 150
+			nash.needs[F] = 50
 
 			self:add_objective('New York needs moar money (150)', function (map) return self.capital:money() >= 150 end)
-			self:add_objective('Nashua needs food to survive! (50)', function (map) return nash:food() >= 50 end)
+			self:add_objective('Boston needs food to survive! (50)', function (map) return nash:food() >= 50 end)
 		end,
 	},
+
 	{
+		on_enter=function(self)
+			local c1 = Chat:new(self, {
+				"Well done! This level is a bit more difficult.\nYou have to use the third resource: " .. CC('Technology', T.color) .. '.'
+			})
+			c1.fade=true
+			set_state(c1)
+		end,
 		load=function (self)
-			self.capital = self:add_city('Paris', 0, 0, stats(0, -1, 0, 0), C.darkslategray, true)
+			local paris = self:add_city('Paris', 0, 0, stats(0, -1, 0, 0), C.darkslategray, true)
+			self.capital = paris
 			local nancy = self:add_city('Nancy', 290, 20, stats(50, -1, 0, 0), C.pink:darker())
-			local marseille = self:add_city('Marseille', 150, 200, stats(10, -1, 0, 0), C.orange)
-			local lille = self:add_city('Lille', 50, -200, stats(0, -1, 10, 0), C.green)
+			local marseille = self:add_city('Marseille', 150, 200, stats(10, -1, 0, 50), C.orange)
+			local lille = self:add_city('Lille', 50, -200, stats(0, -1, 10, 0), C.green, false)
+			paris.needs[F] = 50
+			paris.needs[T] = 30
+			paris.needs[M] = 20
+			marseille.needs[T] = 20
 
 			self:add_objective('Paris wants food! (50)', function ()
-				return self.capital:food() >= 50
+				return self.capital:food() >= paris.needs[F]
 			end)
 			self:add_objective('Paris wants technology!! (30)', function ()
-				return self.capital:technology() >= 30
+				return self.capital:technology() >= paris.needs[T]
 			end)
-			self:add_objective('Paris wants money!!! (200)', function ()
-				return self.capital:money() >= 200
+			self:add_objective('Paris wants money!!! (20)', function ()
+				return self.capital:money() >= paris.needs[M]
 			end)
-			self:add_objective('Marseille needs some computers! (20)', function (map) return marseille:technology() >= 20 end)
+			self:add_objective('Marseille needs some computers! (20)', function (map) return marseille:technology() >= marseille.needs[T] end)
 		end,
 	},
+
 	{
+		on_enter=function(self)
+			local c1 = Chat:new(self, {
+				'This thing is a node.\nIt can only have 2 links connected to it.'
+			}, nil, nil, W*.5, H*.65)
+			c1.fade=true
+			set_state(c1)
+		end,
 		load=function (self)
-			local a = self:add_city('A', 0, 0, stats(0, -1, 100, 0), C.darkslategray, true)
-			local b = self:add_city('B', 290, 0, stats(100, -1, 0, 0), C.pink:darker())
+			local a = self:add_city('A', 0, 0, stats(0, -1, 40, 0), C.darkslategray, true)
+			local b = self:add_city('B', 290, 0, stats(40, -1, 0, 0), C.pink:darker())
 			local n = self:add_node('C', 145, 150, 0, C.black)
 			self.capital = a
+			a.needs[F] = 50
+			b.needs[T] = 50
 
-			self:add_objective('A wants food.', function (map)
-				return a:food() > 50
+			self:add_objective('A wants food. (50)', function (map)
+				return a:food() >= a.needs[F]
 			end)
-			self:add_objective('B wants technology.', function (map)
-				return b:technology() > 50
+			self:add_objective('B wants technology. (50)', function (map)
+				return b:technology() >= b.needs[T]
+			end)
+		end,
+	},
+
+	{
+		on_enter=function(self)
+			local c1 = Chat:new(self, {
+				'And that is a WALL! Bouh, walls are bad!'
+			}, nil, nil, W*.5, H*.55)
+			c1.fade=true
+			set_state(c1)
+		end,
+		load=function (self)
+			local a = self:add_city('A', 0, 0, stats(0, -1, 40, 0), C.darkslategray, true)
+			local b = self:add_city('B', 290, 0, stats(40, -1, 0, 0), C.pink:darker())
+			local n = self:add_node('C', 145, 150, 0, C.black)
+			local n = self:add_node('C', 145, -150, 0, C.black)
+			local w = self:add_wall(145, -100, 145, 100)
+			self.capital = a
+			a.needs[F] = 50
+			b.needs[T] = 50
+
+			self:add_objective('A wants food. (50)', function (map)
+				return a:food() >= a.needs[F]
+			end)
+			self:add_objective('B wants technology. (50)', function (map)
+				return b:technology() >= b.needs[T]
 			end)
 		end,
 	},

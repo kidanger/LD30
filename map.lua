@@ -1,6 +1,7 @@
 local LinkType = require 'linktype'
 local City = require 'city'
 local Node = require 'node'
+local Wall = require 'wall'
 local Objective = require 'objective'
 local Link = require 'link'
 local Map = class 'Map'
@@ -10,8 +11,41 @@ function Map:init(f)
 	self.possiblelinks = {}
 	self.cities = {}
 	self.objectives = {}
+	self.walls = {}
 	self.finished = false
 	f(self)
+	self:bake()
+end
+
+local function ccw(x1, y1, x2, y2, x3, y3)
+	return (y3-y1)*(x2-x1) > (y2-y1)*(x3-x1)
+end
+
+local function lineintersect(x1,y1,x2,y2,x3,y3,x4,y4)
+	if x1 == x2 and x1 == x3 and x1 == x4 then
+		return true
+	end
+	if y1 == y2 and y1 == y3 and y1 == y4 then
+		return true
+	end
+	return ccw(x1, y1, x3, y3, x4, y4) ~= ccw(x2, y2, x3, y3, x4, y4) and ccw(x1, y1, x2, y2, x3, y3) ~= ccw(x1, y1, x2, y2, x4, y4)
+end
+
+function Map:bake()
+	for i, c in ipairs(self.cities) do
+		for j=i+1,#self.cities do
+			local c2 = self.cities[j]
+			local inter = false
+			for _,w in ipairs(self.walls) do
+				if lineintersect(c.x,c.y, c2.x, c2.y, w.x,w.y, w.x2, w.y2) then
+					inter = true
+				end
+			end
+			if not inter then
+				self:add_possiblelink(c, c2)
+			end
+		end
+	end
 end
 
 function Map:add_objective(...)
@@ -22,22 +56,21 @@ end
 
 function Map:add_city(...)
 	local c = City:new(...)
-	for _, c2 in ipairs(self.cities) do
-		self:add_possiblelink(c, c2)
-	end
 	table.insert(self.cities, c)
 	return c
 end
 
 function Map:add_node(...)
 	local n = Node:new(...)
-	for _, c2 in ipairs(self.cities) do
-		self:add_possiblelink(n, c2)
-	end
 	table.insert(self.cities, n)
 	return n
 end
 
+function Map:add_wall(...)
+	local w = Wall:new(...)
+	table.insert(self.walls, w)
+	return w
+end
 function Map:add_link(...)
 	local l = Link:new(...)
 	table.insert(self.links, l)
@@ -82,6 +115,9 @@ function Map:draw()
 	end
 	for _, c in ipairs(self.cities) do
 		c:draw2()
+	end
+	for _, w in ipairs(self.walls) do
+		w:draw()
 	end
 end
 

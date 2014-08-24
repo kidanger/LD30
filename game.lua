@@ -17,7 +17,7 @@ local game = {
 	selectedcity=nil,
 	hllink=nil,
 
-	current_level=0,
+	current_level=2,
 	levels=require'levels'
 }
 local mx, my = W/2,H/2
@@ -177,6 +177,9 @@ function game:key_press(k)
 		if self.map.finished then
 			self:load_next_level()
 		end
+	elseif k == 't' then
+		self.current_level = 0
+		self:load_next_level()
 	elseif k == 'y' then
 		self:load_next_level()
 	end
@@ -234,7 +237,6 @@ function game:buy_link(link)
 		local j = 1
 		while j <= #self.map.possiblelinks do
 			local l = self.map.possiblelinks[j]
-			print(link.c1, l.c1,l.c2)
 			if c1count == 2 and (l.c1 == link.c1 or l.c2 == link.c1) then
 				self.map.possiblelinks[j] = self.map.possiblelinks[#self.map.possiblelinks]
 				self.map.possiblelinks[#self.map.possiblelinks] = nil

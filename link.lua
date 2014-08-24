@@ -18,9 +18,9 @@ function Link:update(dt)
 	if self.transfertime == -1 then
 		local x1 = self.c1.stats[self.type] or 0
 		local x2 = self.c2.stats[self.type] or 0
-		if self.type == LinkType.money and self.c1.is_capital then
+		if self.c1:need(self.type, self.c2) then
 			x1 = 0
-		elseif self.type == LinkType.money and self.c2.is_capital then
+		elseif self.c2:need(self.type, self.c1) then
 			x2 = 0
 		end
 
@@ -42,6 +42,7 @@ function Link:update(dt)
 			end
 		end
 	end
+
 	if self.transfertime > -1 then
 		self.transfertime = self.transfertime + dt
 		if self.transfertime >= 1 then
