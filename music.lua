@@ -78,12 +78,14 @@ function music.draw()
 end
 
 function music.get(f)
-	if lume.find(music.req, f) then
+	if lume.find(music.req, f) or music.songs[f] then
 		print(f, 'already wgetting')
+		return
 	end
 	table.insert(music.req, f)
 	drystal.wget(f, f, function()
 		print(f, 'wgetted')
+		music.songs[f] = assert(drystal.load_music(f))
 		if music.want == f or not music.playing then
 			music.play(f)
 		end
