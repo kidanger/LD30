@@ -51,7 +51,7 @@ return {
 						' in order to transfer '..CC('Food',LinkType.food.color).. ' from '..CC('Philadelphia', phil.color)..
 						'\nto ' .. CC('Boston',nash.color) .. '.',
 						'Restart the level using the top right button.'
-					})
+					}, nil, nil, W*.9,80)
 					set_state(c)
 				else
 					local c = Chat:new(self, {
@@ -75,7 +75,7 @@ return {
 						' in order to transfer '..CC('Money',LinkType.money.color).. ' from '..CC('Philadelphia', phil.color)..
 						'\nto ' .. CC('New York',ny.color) .. '.',
 						'Restart the level using the top right button.'
-					})
+					}, nil, nil, W*.89,100)
 					set_state(c)
 				end
 			end

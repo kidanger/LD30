@@ -30,6 +30,7 @@ function game:init()
 end
 
 function game:load_next_level()
+	toolbar.reset()
 	if self.map then self.map.finished = false end
 	self.current_level = self.current_level + 1
 	local lvl = self.levels[self.current_level]
@@ -59,6 +60,7 @@ function game:center_cam()
 end
 
 function game:restart()
+	toolbar.reset()
 	music.plop('restart.wav')
 	if self.map then self.map.finished = false end
 	local lvl = self.levels[self.current_level]

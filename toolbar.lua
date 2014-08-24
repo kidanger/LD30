@@ -28,7 +28,7 @@ local function show(text, state, x, y, w, h, color)
 		drystal.draw_rect(x, y, w, h)
 	end
 
-	font:draw(text, x+w/2-ww/2, y+h/2-hh/2)
+	font:draw('{shadowx:2|shadowy:2|'..text..'}', x+w/2-ww/2, y+h/2-hh/2)
 end
 
 local w = 150
@@ -58,6 +58,11 @@ function toolbar.mouse_motion(x, y)
 			return true
 		end
 	end
+end
+
+function toolbar.reset()
+	toolbar.selected = 1
+	toolbar.type = LinkType[stuff[toolbar.selected].type]
 end
 
 function toolbar.next()
