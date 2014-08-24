@@ -43,6 +43,37 @@ function state:draw()
 	if state.i - 30 >= #str then
 		font:draw('by kidanger for Ludum Dare #30 (Connected Worlds)', w*.95, h*.9, 3)
 	end
+	if state.i - 50 >= #str then
+		drystal.set_alpha(lume.smooth(20, 150, math.sin(TIME*5)*.5+.5))
+		font:draw('Click or press space...', W*.5, H*.8, 2)
+	end
+end
+
+function state:nnn()
+	self.game.current_level = 0
+	local menu = require 'menu'
+	menu:init()
+	set_state(menu)
+end
+
+function state:mouse_press(x, y, b)
+	self:nnn()
+end
+
+function state:key_press(k)
+	if k == 'space' then
+		self:nnn()
+	elseif k == 'b' then
+		self.game.current_level = self.game.current_level - 1
+		if self.game.current_level <= 0 then
+			self.game.current_level = 1
+		end
+		set_state(self.game)
+		self.game:restart()
+	elseif k == 'n' then
+		set_state(self.game)
+		self.game:load_next_level()
+	end
 end
 
 return state

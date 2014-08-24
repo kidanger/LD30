@@ -40,7 +40,7 @@ function game:load_next_level()
 		if lvl.on_enter then
 			lvl.on_enter(self)
 		end
-		drystal.store('links', {lvl=self.current_level-1})
+		drystal.store('links', {lvl=self.current_level-1,mute=music.is_mute()})
 	else
 		set_state(theend)
 		music.play('m4.ogg')
@@ -69,7 +69,7 @@ function game:restart()
 		if lvl.on_enter then
 			lvl.on_enter(self)
 		end
-		drystal.store('links', {lvl=self.current_level-1})
+		drystal.store('links', {lvl=self.current_level-1,mute=music.is_mute()})
 	else
 		set_state(theend)
 		music.play('intro.ogg')
@@ -159,7 +159,7 @@ function game:draw()
 	end
 	do
 		local bx, by = W-100, 75
-		drystal.set_color(0,0,0)
+		drystal.set_color(150,150,150)
 		if self.hlrestart then
 			drystal.set_alpha(100)
 			drystal.draw_rect(bx, by, W-bx-5, 35)

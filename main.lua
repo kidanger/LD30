@@ -15,7 +15,8 @@ local music = require 'music'
 local game = require 'game'
 local data = drystal.fetch('links')
 if data then
-	game.current_level = data.lvl
+	--game.current_level = data.lvl
+	if data.mute then music.mute() end
 end
 local menu = require 'menu'
 

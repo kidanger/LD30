@@ -59,20 +59,26 @@ function music.draw()
 		drystal.set_color(200,200,200)
 		smallfont:draw('Downloading music...', W*.01, H*.97)
 	end
-	drystal.set_color(150, 150, 150)
-	drystal.set_alpha(255)
 	drystal.set_line_width(1)
 	if mute then
+		drystal.set_color(150,150,150)
 		if hl then
+			drystal.set_alpha(100)
 			drystal.draw_rect(W-50, 2, 48, 14)
 		end
+		drystal.set_alpha(255)
 		drystal.draw_square(W-50, 2, 48, 14)
+		drystal.set_color(255,255,255)
 		smallfont:draw('Unmute', W-48, 3)
 	else
+		drystal.set_color(150,150,150)
 		if hl then
+			drystal.set_alpha(100)
 			drystal.draw_rect(W-36, 2, 34, 14)
 		end
+		drystal.set_alpha(255)
 		drystal.draw_square(W-36, 2, 34, 14)
+		drystal.set_color(255,255,255)
 		smallfont:draw('Mute', W-34, 3)
 	end
 end
@@ -154,6 +160,9 @@ function music.plop(s, vol)
 	music.sounds[s]:play(vol or 1)
 end
 
+function music.is_mute()
+	return mute
+end
 function music.mute()
 	mute = not mute
 	if mute then
