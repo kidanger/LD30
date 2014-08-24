@@ -1,5 +1,6 @@
 local LinkType = require 'linktype'
 local Chat = require 'chat'
+local music = require 'music'
 
 local function stats(f, n, t, g)
 	local s = {}
@@ -21,6 +22,7 @@ local T = LinkType.technology
 return {
 	{
 		on_enter=function(self)
+			music.play('m1.ogg')
 			local phil = self.map:get_city('Philadelphia')
 			local nash = self.map:get_city('Boston')
 			local c1 = Chat:new(self, {
@@ -82,6 +84,7 @@ return {
 
 	{
 		on_enter=function(self)
+			music.play('m2.ogg')
 			local c1 = Chat:new(self, {
 				"Well done! This level is a bit more difficult.\nYou have to use the third resource: " .. CC('Technology', T.color) .. '.'
 			})
@@ -121,19 +124,12 @@ return {
 			set_state(c1)
 		end,
 		load=function (self)
-			local a = self:add_city('A', 0, 0, stats(0, -1, 40, 0), C.darkslategray, true)
-			local b = self:add_city('B', 290, 0, stats(40, -1, 0, 0), C.pink:darker())
-			local n = self:add_node('C', 145, 150, 0, C.black)
-			self.capital = a
+			local a = self:add_city('Frozen City', 0, 0, stats(0, -1, 40, 0), C.darkslategray)
+			local b = self:add_city('Farmville', 290, 0, stats(40, -1, 0, 0), C.pink:darker())
+			local n = self:add_node('Node', 145, 150, 0, C.black)
 			a.needs[F] = 50
 			b.needs[T] = 50
-
-			self:add_objective('A wants food. (50)', function (map)
-				return a:food() >= a.needs[F]
-			end)
-			self:add_objective('B wants technology. (50)', function (map)
-				return b:technology() >= b.needs[T]
-			end)
+			self:auto_objectives()
 		end,
 	},
 
@@ -146,21 +142,29 @@ return {
 			set_state(c1)
 		end,
 		load=function (self)
-			local a = self:add_city('A', 0, 0, stats(0, -1, 40, 0), C.darkslategray, true)
-			local b = self:add_city('B', 290, 0, stats(40, -1, 0, 0), C.pink:darker())
-			local n = self:add_node('C', 145, 150, 0, C.black)
-			local n = self:add_node('C', 145, -150, 0, C.black)
+			local a = self:add_city('West Berlin', 0, 0, stats(0, -1, 40, 0), C.darkslategray)
+			local b = self:add_city('East Berlin', 290, 0, stats(40, -1, 0, 0), C.pink:darker())
+			local n = self:add_node('Node', 145, 150, 0, C.black)
+			local n = self:add_node('Node', 145, -150, 0, C.black)
 			local w = self:add_wall(145, -100, 145, 100)
-			self.capital = a
 			a.needs[F] = 50
 			b.needs[T] = 50
 
-			self:add_objective('A wants food. (50)', function (map)
-				return a:food() >= a.needs[F]
-			end)
-			self:add_objective('B wants technology. (50)', function (map)
-				return b:technology() >= b.needs[T]
-			end)
+			self:auto_objectives()
+		end,
+	},
+
+	{
+		load=function (self)
+			local a = self:add_city('West Berlin', 0, 0, stats(0, -1, 40, 0), C.darkslategray)
+			local b = self:add_city('East Berlin', 290, 0, stats(40, -1, 0, 0), C.pink:darker())
+			local n = self:add_node('Node', 145, 150, 0, C.black)
+			local n = self:add_node('Node', 145, -150, 0, C.black)
+			local w = self:add_wall(145, -100, 145, 100)
+			a.needs[F] = 50
+			b.needs[T] = 50
+
+			self:auto_objectives()
 		end,
 	},
 }

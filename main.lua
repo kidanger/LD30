@@ -10,6 +10,7 @@ bigfont = drystal.load_font('font.ttf', 38)
 class = require 'middleclass'
 lume = require 'lume'
 tween = require 'tween'
+local music = require 'music'
 
 local state = require 'game'
 
@@ -23,6 +24,7 @@ TIME = 0
 function drystal.update(dt)
 	TIME = TIME + dt
 	state:update(dt)
+	music.update(dt)
 end
 
 function drystal.draw()

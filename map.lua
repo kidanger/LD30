@@ -48,6 +48,19 @@ function Map:bake()
 	end
 end
 
+function Map:auto_objectives()
+	for _, c in ipairs(self.cities) do
+		for x, t in pairs(LinkType) do
+			if not c.is_node and c.needs[t] and c.needs[t] > 0 then
+				local verb = lume.randomchoice({' needs ', ' wants '})
+				self:add_objective(c.name..verb..x..'. (' .. c.needs[t] .. ')', function()
+					return c.stats[t] >= c.needs[t]
+				end)
+			end
+		end
+	end
+end
+
 function Map:add_objective(...)
 	local o = Objective:new(...)
 	table.insert(self.objectives, o)

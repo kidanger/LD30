@@ -5,6 +5,7 @@ local infocity = require 'infocity'
 local toolbar = require 'toolbar'
 local objectives = require 'objectives'
 local theend = require 'end'
+local music = require 'music'
 
 local game = {
 	map=nil,
@@ -17,7 +18,7 @@ local game = {
 	selectedcity=nil,
 	hllink=nil,
 
-	current_level=2,
+	current_level=0,
 	levels=require'levels'
 }
 local mx, my = W/2,H/2
@@ -166,6 +167,7 @@ function game:draw()
 		font:draw('Restart', bx+10, by+6)
 	end
 
+	music.draw()
 
 	drystal.camera.x = - self.cx + drystal.screen.w / 2
 	drystal.camera.y = - self.cy + drystal.screen.h / 2

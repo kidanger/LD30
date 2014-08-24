@@ -26,7 +26,7 @@ function Node:draw2()
 
 	drystal.set_alpha(200)
 	drystal.set_color(200,200,200)
-	drystal.draw_circle(self.x, self.y, self.size/2)
+	drystal.draw_circle(self.x, self.y, lume.lerp(self.size/3, self.size/2, math.sin(TIME)*.5+.5))
 end
 
 function Node:want(t)
