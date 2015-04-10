@@ -13,7 +13,7 @@ end
 
 local C = drystal.colors
 local function CC(text, color)
-	return ('{r:%d|g:%d|b:%d|' .. text .. '}'):format(unpack(color))
+	return ('{r:%f|g:%f|b:%f|' .. text .. '}'):format(unpack(color))
 end
 local M = LinkType.money
 local F = LinkType.food

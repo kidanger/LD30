@@ -114,7 +114,6 @@ function Map:draw()
 		end
 		self.buffer:upload_and_free()
 		drystal.use_default_buffer()
-		collectgarbage()
 	end
 	self.buffer:draw()
 	drystal.set_alpha(255)
