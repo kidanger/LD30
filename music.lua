@@ -89,9 +89,10 @@ function music.get(f)
 		return
 	end
 	table.insert(music.req, f)
-	drystal.wget(f, f, function()
+	drystal.wget('musics/'..f, 'musics/'..f, function()
 		print(f, 'wgetted')
-		music.songs[f] = assert(drystal.load_music(f))
+		music.songs[f] = assert(drystal.load_music('musics/'..f))
+		print(drystal.file_exists('musics/' .. f))
 		if music.want == f or not music.playing then
 			music.play(f)
 		end
@@ -113,7 +114,7 @@ function music.play(f)
 	end
 	if not music[songs] then
 		print('try load', f)
-		if not drystal.file_exists(f) then
+		if not drystal.file_exists('musics/' .. f) then
 			if drystal.is_web then
 				print('i dont have', f)
 			else
@@ -122,7 +123,7 @@ function music.play(f)
 			return
 		end
 		print('load', f)
-		music.songs[f] = assert(drystal.load_music(f))
+		music.songs[f] = assert(drystal.load_music('musics/' .. f))
 	end
 	if music.playing then
 		--music.songs[music.playing]:stop()
