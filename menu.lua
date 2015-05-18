@@ -75,8 +75,8 @@ function menu:draw()
 
 	self.ccx = self.ccx + (self.cx-self.ccx)*.2
 	self.ccy = self.ccy + (self.cy-self.ccy)*.2
-	drystal.camera.x = - self.ccx + drystal.screen.w / 2
-	drystal.camera.y = - self.ccy + drystal.screen.h / 2
+	drystal.camera.x = self.ccx - drystal.screen.w / 2
+	drystal.camera.y = self.ccy - drystal.screen.h / 2
 
 	self.map:draw()
 	drystal.camera.reset()

@@ -139,8 +139,8 @@ function game:draw()
 
 	self.ccx = self.ccx + (self.cx-self.ccx)*.2
 	self.ccy = self.ccy + (self.cy-self.ccy)*.2
-	drystal.camera.x = - self.ccx + drystal.screen.w / 2
-	drystal.camera.y = - self.ccy + drystal.screen.h / 2
+	drystal.camera.x = self.ccx - drystal.screen.w / 2
+	drystal.camera.y = self.ccy - drystal.screen.h / 2
 
 	self.map:draw()
 	drystal.camera.reset()
@@ -182,8 +182,8 @@ function game:draw()
 	font:draw('{shadowx:2|shadowy:2|Level: ' .. self.current_level .. '/' .. #self.levels .. '}', 6, 6)
 end
 function game:set_cam()
-	drystal.camera.x = - self.cx + drystal.screen.w / 2
-	drystal.camera.y = - self.cy + drystal.screen.h / 2
+	drystal.camera.x = self.cx - drystal.screen.w / 2
+	drystal.camera.y = self.cy - drystal.screen.h / 2
 end
 
 function game:key_press(k)
