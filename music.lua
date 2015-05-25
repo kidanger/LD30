@@ -59,7 +59,6 @@ function music.draw()
 		drystal.set_color(200,200,200)
 		smallfont:draw('Downloading music...', W*.01, H*.97)
 	end
-	drystal.set_line_width(1)
 	if mute then
 		drystal.set_color(150,150,150)
 		if hl then

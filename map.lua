@@ -126,8 +126,7 @@ function Map:draw()
 		if l.c1.selected or l.c2.selected then
 			drystal.set_alpha(100)
 			drystal.set_color(200,200,200)
-			drystal.set_line_width(3)
-			drystal.draw_line(l.c1.x, l.c1.y, l.c2.x, l.c2.y)
+			drystal.draw_line(l.c1.x, l.c1.y, l.c2.x, l.c2.y, 3)
 		end
 	end
 	for _, l in ipairs(self.possiblelinks) do

@@ -74,8 +74,7 @@ function Link:draw()
 		drystal.set_alpha(255)
 	end
 
-	drystal.set_line_width(5)
-	drystal.draw_line(self.c1.x, self.c1.y, self.c2.x, self.c2.y)
+	drystal.draw_line(self.c1.x, self.c1.y, self.c2.x, self.c2.y, 5)
 
 	local xx = self.transfertime / self.distance
 	if self.transfer == 1 then

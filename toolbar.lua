@@ -15,10 +15,9 @@ local stuff = {
 
 local function show(text, state, x, y, w, h, color)
 	local ww, hh = font:sizeof(text)
-	drystal.set_line_width(2)
 	drystal.set_color(color)
 	drystal.set_alpha(255)
-	drystal.draw_square(x, y, w, h)
+	drystal.draw_square(x, y, w, h, 2)
 
 	if state == 2 then -- selected
 		drystal.set_alpha(150)
